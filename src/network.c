@@ -23,15 +23,15 @@ int init_network()
 	if(SDLNet_ResolveHost(&ip, configuration->server->hostname, configuration->server->port) < 0) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "unable to resolve address %s , port %d\n", 
 				configuration->server->hostname,
-			       	configuration->server->port);
+				configuration->server->port);
 		return 0;
 	} 
 	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "connecting to server");
 	if(!(control_socket = SDLNet_TCP_Open(&ip))) {
-		 SDL_LogError(SDL_LOG_CATEGORY_ERROR,"SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR,"SDLNet_TCP_Open: %s\n", SDLNet_GetError());
 		return 0;
 	}
-	
+
 	netThread = SDL_CreateThread(network_thread, "network_thread", configuration);
 	return 0;
 }
@@ -105,9 +105,9 @@ void SRD_ensure(int nbytes )
 		int net_lenght = SDLNet_TCP_Recv(control_socket, net_in, nbytes); //FIXME : adjust max data
 		if(net_lenght <= 0) {
 			// TCP Connection is broken. (because of error or closure)
-			     SDLNet_TCP_Close(control_socket);
-			     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Broken socket disconnected");    
-			
+			SDLNet_TCP_Close(control_socket);
+			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Broken socket disconnected");    
+
 		}
 		else {
 			memcpy(inbuf+inbuf_average, net_in, net_lenght);
@@ -125,11 +125,10 @@ int SRD_readUInt32()
 	uint8_t *data = SRD_read(4);
 	SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, " %x %x %x %x \n", data[0], data[1], data[2], data[3]);
 	uint32_t num = 
-		(uint32_t)data[0] << 24 |
-		(uint32_t) data[1] << 16 |
-		(uint32_t) data[2] << 8  |
-		(uint32_t) data[3];
-
+		(uint32_t)data[3] << 24 |
+		(uint32_t) data[2] << 16 |
+		(uint32_t) data[1] << 8  |
+		(uint32_t) data[0];
 	return num;
 }
 
@@ -152,10 +151,12 @@ int network_thread(void* configuration)
 	while(true) 
 	{
 		Video_Frame *frame = malloc(sizeof(Video_Frame));
-		
+
 		// get frame from network
 		frame->number = SRDNet_get_frame_number();
+		SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame number count %d", frame->number);
 		frame->length =  SRDNet_get_frame_length();
+		SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame length %d", frame->length);
 
 		SRD_ensure(frame->length);
 		frame->data = SRD_read(frame->length);

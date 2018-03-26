@@ -3,7 +3,6 @@
 #include "input.h"
 #include "network.h"
 #include "video_surface.h"
-#include "keysym_converter.h"
 
 void get_input_event()
 {
@@ -44,7 +43,7 @@ void get_input_event()
 
 				    } else {
 
-					    send.keycode = get_keysym(userEvent.key.keysym.sym);
+					    send.keycode = userEvent.key.keysym.sym;
 					    SDLNet_TCP_Send(control_socket, (void * )&send, sizeof(send));
 				    } 
 
@@ -61,7 +60,7 @@ void get_input_event()
 					    alt_press = false;
 				    }
 
-				    send.keycode = get_keysym(userEvent.key.keysym.sym);
+				    send.keycode = userEvent.key.keysym.sym;
 				    SDLNet_TCP_Send(control_socket, (void * )&send, sizeof(send));
 				    break;				
 
