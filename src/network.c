@@ -68,7 +68,7 @@ int SRDNet_send_stop_packet()
 
 }
 
-int SRDNet_get_frame_number()
+int SRDNet_get_frame_type()
 {
 	SRD_ensure(4);
 	return SRD_readUInt32();
@@ -105,8 +105,8 @@ void SRD_ensure(int nbytes )
 		int net_lenght = SDLNet_TCP_Recv(control_socket, net_in, nbytes); //FIXME : adjust max data
 		if(net_lenght <= 0) {
 			// TCP Connection is broken. (because of error or closure)
+			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Broken socket disconnected");
 			SDLNet_TCP_Close(control_socket);
-			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Broken socket disconnected");    
 
 		}
 		else {
@@ -153,8 +153,8 @@ int network_thread(void* configuration)
 		Video_Frame *frame = malloc(sizeof(Video_Frame));
 
 		// get frame from network
-		frame->number = SRDNet_get_frame_number();
-		SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame number count %d", frame->number);
+		frame->type = SRDNet_get_frame_type();
+		SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame type %d", frame->type);
 		frame->length =  SRDNet_get_frame_length();
 		SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame length %d", frame->length);
 
@@ -165,7 +165,17 @@ int network_thread(void* configuration)
 		element->frame = NULL;
 		element->next = NULL;
 		element->frame = frame;
-		push_to_video_fifo(element);
+		if(frame->type == VIDEO_FRAME)
+		{
+			push_to_video_fifo(element);
+		}
+		else if(frame->type = AUDIO_FRAME)
+		{
+			SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "AUDIO frame length %d", frame->length);
+		 } else {
+
+			SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Unknow frame type %d", frame->type);
+        }
 
 
 	}

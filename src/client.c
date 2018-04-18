@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
 	// set log level
 
-	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
+	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
 	// default value workaround
 	//
@@ -178,7 +178,7 @@ int video_thread(void* configuration)
 		if(frame != NULL)
 		{
 		
-			SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame number : %d, frame size : %d", frame->number, frame->length);
+			SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame size : %d", frame->length);
 			decode_video_frame(frame->data, frame->length, configuration); 
 			update_video_surface(); 
 			free(frame);

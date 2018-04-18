@@ -12,6 +12,8 @@
 
 #include <stdio.h>
 
+#define VIDEO_FRAME 1
+#define AUDIO_FRAME 2
 
 #define INBUF_SIZE 1000000
 #define FF_INPUT_BUFFER_PADDING_SIZE 32
@@ -40,11 +42,11 @@ struct Message
 
 typedef struct 
 {
-	int number;
+	int type;
 	int length;
 	uint8_t* data;
 	
-} Video_Frame;
+} Video_Frame; //TODO refactor => also sound frame
 
 typedef struct Video_Frame_Element Video_Frame_Element;
 struct Video_Frame_Element
