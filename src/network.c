@@ -172,6 +172,7 @@ int network_thread(void* configuration)
 		else if(frame->type = AUDIO_FRAME)
 		{
 			SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "AUDIO frame length %d", frame->length);
+			SRD_audio_decode(frame->data, frame->length);
 		 } else {
 
 			SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Unknow frame type %d", frame->type);

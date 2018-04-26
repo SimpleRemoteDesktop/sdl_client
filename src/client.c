@@ -10,6 +10,9 @@
 #include "input.h"
 #include "video_decoder.h"
 #include "video_surface.h"
+#include "audio_decoder.h"
+#include "audio_player.h"
+
 
 //memset(inbuf+INBUF_SIZE, 0, FF_INPUT_BUFFER_PADDING_SIZE);
 
@@ -123,6 +126,9 @@ int main(int argc, char *argv[])
 		SRD_exit();
 	}
 	init_video(configuration->screen->width, configuration->screen->height); //FIXME return status code
+	SRD_audio_decoder_init(48000, 2); //FIXME return status code + unfix args
+	SRD_init_audio(48000, 2); //FIXME return status code + unfix args
+
 	SRD_start_video();
 	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "start input event loop\n "); //EVENT LOOP FOR CATCH INPUT EVENT //TODO REFACTOR
 	for(;;) {

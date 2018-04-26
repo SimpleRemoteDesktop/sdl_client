@@ -2,8 +2,8 @@
 #include <SDL2/SDL_net.h>
 #include <SDL2/SDL_thread.h>
 #include <stdbool.h>
-#include<stdint.h>
-#include<time.h>
+#include <stdint.h>
+#include <time.h>
 
 
 

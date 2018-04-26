@@ -11,7 +11,7 @@
 #endif
 
 #include <stdio.h>
-
+#include "audio_decoder.h"
 #define VIDEO_FRAME 1
 #define AUDIO_FRAME 2
 
