@@ -40,6 +40,7 @@ void SRD_audio_decode(unsigned char* audioFrame, int size)
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"SDL_LockAudio writting %d  bytes \n ", buffer_length);
     SDL_LockAudioDevice(audioDeviceID);
     memcpy(raw_audio_buffer->buffer+raw_audio_buffer->lenght, output_audio_raw,buffer_length);
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[ OPUS DECODER : ] current buffer length %d , add %d\n", raw_audio_buffer->lenght, buffer_length);
     raw_audio_buffer->lenght += buffer_length;
     SDL_UnlockAudioDevice(audioDeviceID);
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"SDL_Unlock_audio \n");
