@@ -13,6 +13,7 @@ typedef struct {
 } Raw_Audio_Buffer;
 
 Raw_Audio_Buffer *raw_audio_buffer;
+extern SDL_AudioDeviceID audioDeviceID;
 
 void SRD_audio_decoder_init(int sampleRate, int channels);
 void SRD_audio_decode(unsigned char* audioFrame, int size);

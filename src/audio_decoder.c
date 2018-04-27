@@ -27,20 +27,22 @@ void SRD_audio_decoder_init(int sampleRate, int channels)
 
 void SRD_audio_decode(unsigned char* audioFrame, int size)
 {
-    opus_int16* output_audio_raw;
+    opus_int16* output_audio_raw = (opus_int16*) malloc(3840);
+    memset(output_audio_raw, 0, 3840);
     int frame_size = opus_decode(decoder, (const unsigned char*) audioFrame, size, output_audio_raw, 480, 0);
     if (frame_size<0)
     {
         fprintf(stderr, "decoder failed: %s\n", opus_strerror(frame_size));
-        return exit(1); //FIXME
+        exit(1); //FIXME
     }
-
-	int buffer_length = frame_size * 2 * sizeof(opus_int16); //FIXME  channels numbers
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"SDL_LockAudio writting %d  bytes \n ", buffer_length);
-    SDL_LockAudio();
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "opus decoded frame_size : %d", frame_size);
+    int buffer_length = frame_size * 2 * sizeof(opus_int16); //FIXME  channels numbers
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"SDL_LockAudio writting %d  bytes \n ", buffer_length);
+    SDL_LockAudioDevice(audioDeviceID);
     memcpy(raw_audio_buffer->buffer+raw_audio_buffer->lenght, output_audio_raw,buffer_length);
-   raw_audio_buffer->lenght += buffer_length;
-   SDL_UnlockAudio();
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"SDL_Unlock_audio \n");
+    raw_audio_buffer->lenght += buffer_length;
+    SDL_UnlockAudioDevice(audioDeviceID);
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"SDL_Unlock_audio \n");
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[OPUS_DECODER : ] raw buffer size %d \n", raw_audio_buffer->lenght);
 
 }

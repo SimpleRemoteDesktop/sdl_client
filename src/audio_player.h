@@ -9,8 +9,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "audio_decoder.h"
-#define SDL_AUDIO_BUFFER_SIZE 1920
+#define SDL_AUDIO_BUFFER_SIZE 960
 
+SDL_AudioDeviceID audioDeviceID;
 
 void SRD_init_audio(int sampleRate, int channels);
 
