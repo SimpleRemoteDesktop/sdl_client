@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
 	// set log level
 
-	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 
 	// default value workaround
 	//

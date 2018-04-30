@@ -8,11 +8,14 @@
 #include <stdlib.h>
 
 typedef struct {
-    unsigned char buffer[10000];
-    int lenght;
-} Raw_Audio_Buffer;
+    unsigned char buffer[1000000];
+    unsigned int size;
+} SRD_Raw_Audio_Buffer;
 
-Raw_Audio_Buffer *raw_audio_buffer;
+
+unsigned int counter;
+
+SRD_Raw_Audio_Buffer * SRD_raw_audio_buffer;
 extern SDL_AudioDeviceID audioDeviceID;
 
 void SRD_audio_decoder_init(int sampleRate, int channels);
