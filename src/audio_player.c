@@ -9,16 +9,17 @@ SDL_AudioSpec   wanted_spec, spec;
 void audioCallback(void *udata, Uint8 *stream, int len)
 {
    
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[AUDIO CB ]tream buffer length %d \n", len);
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[AUDIO CB ] Raw audio buffer size %d \n", SRD_raw_audio_buffer->size);
 	if(SRD_raw_audio_buffer->size >= len) {
        memcpy(stream, SRD_raw_audio_buffer->buffer, len);
        memcpy(SRD_raw_audio_buffer->buffer,
               SRD_raw_audio_buffer->buffer+len,
               SRD_raw_audio_buffer->size - len);
        SRD_raw_audio_buffer->size -= len;
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"Raw audio buffer size after %d \n", SRD_raw_audio_buffer->size);
    }
+   if(SRD_raw_audio_buffer->size >= 6*len) {
+	    //TODO refactor => cleaning
+       SRD_raw_audio_buffer->size = 0;
+	}
 }
 
 

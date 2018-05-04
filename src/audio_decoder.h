@@ -12,9 +12,6 @@ typedef struct {
     unsigned int size;
 } SRD_Raw_Audio_Buffer;
 
-
-unsigned int counter;
-
 SRD_Raw_Audio_Buffer * SRD_raw_audio_buffer;
 extern SDL_AudioDeviceID audioDeviceID;
 
