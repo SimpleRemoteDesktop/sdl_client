@@ -23,13 +23,16 @@ int main(int argc, char *argv[])
 	// Declare display mode structure to be filled in.
 	SDL_DisplayMode current;
 
+	//sound driver only for windows
 
-
+#ifdef WIN32
+	putenv("SDL_AUDIODRIVER=DirectSound");
+#endif
 
 
 	// set log level
 
-	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 
 	// default value workaround
 	//
@@ -183,7 +186,7 @@ int video_thread(void* configuration)
 		Video_Frame* frame = pop_from_video_fifo();
 		if(frame != NULL)
 		{
-		
+
 			SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame size : %d", frame->length);
 			decode_video_frame(frame->data, frame->length, configuration); 
 			update_video_surface(); 
@@ -192,7 +195,7 @@ int video_thread(void* configuration)
 		}
 
 	}
-//	SRDNet_Empty_input_buffer();
+	//	SRDNet_Empty_input_buffer();
 	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "finish and cleaning video thread");
 	SRD_close_renderer(configuration);
 

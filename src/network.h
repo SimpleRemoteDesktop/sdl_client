@@ -47,7 +47,7 @@ typedef struct
 	int length;
 	uint8_t* data;
 	
-} Video_Frame; //TODO refactor => also sound frame
+} Video_Frame;
 
 typedef struct Video_Frame_Element Video_Frame_Element;
 struct Video_Frame_Element

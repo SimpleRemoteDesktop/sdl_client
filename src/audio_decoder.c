@@ -12,8 +12,8 @@ OpusDecoder *decoder;
 void SRD_audio_decoder_init(int sampleRate, int channels)
 {
 
-    raw_audio_buffer = (Raw_Audio_Buffer*) malloc(sizeof(Raw_Audio_Buffer));
-    raw_audio_buffer->lenght = 0;
+    SRD_raw_audio_buffer = (SRD_Raw_Audio_Buffer*) malloc(sizeof(SRD_Raw_Audio_Buffer));
+    SRD_raw_audio_buffer->size = 0;
 
 
     decoder = opus_decoder_create(sampleRate, channels, &err);
@@ -27,20 +27,20 @@ void SRD_audio_decoder_init(int sampleRate, int channels)
 
 void SRD_audio_decode(unsigned char* audioFrame, int size)
 {
-    opus_int16* output_audio_raw;
-    int frame_size = opus_decode(decoder, (const unsigned char*) audioFrame, size, output_audio_raw, 480, 0);
+
+    opus_int16* output_audio_raw = (opus_int16*) malloc(MAX_FRAME_SIZE*2*2);
+    memset(output_audio_raw, 0, MAX_FRAME_SIZE*2*2);
+    int frame_size = opus_decode(decoder, (const unsigned char*) audioFrame, size, output_audio_raw, MAX_FRAME_SIZE, 0);
     if (frame_size<0)
     {
         fprintf(stderr, "decoder failed: %s\n", opus_strerror(frame_size));
-        return exit(1); //FIXME
+        exit(1); //FIXME
     }
-
-	int buffer_length = frame_size * 2 * sizeof(opus_int16); //FIXME  channels numbers
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"SDL_LockAudio writting %d  bytes \n ", buffer_length);
-    SDL_LockAudio();
-    memcpy(raw_audio_buffer->buffer+raw_audio_buffer->lenght, output_audio_raw,buffer_length);
-   raw_audio_buffer->lenght += buffer_length;
-   SDL_UnlockAudio();
-	SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"SDL_Unlock_audio \n");
+    unsigned int buffer_length = frame_size * 2 * sizeof(opus_int16); //FIXME  channels numbers
+    SDL_LockAudioDevice(audioDeviceID);
+    memcpy(SRD_raw_audio_buffer->buffer+SRD_raw_audio_buffer->size, output_audio_raw,buffer_length);
+    SRD_raw_audio_buffer->size = (size_t) SRD_raw_audio_buffer->size + (size_t) buffer_length;
+    SDL_UnlockAudioDevice(audioDeviceID);
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[OPUS_DECODER : ] raw buffer size %u \n", SRD_raw_audio_buffer->size);
 
 }
