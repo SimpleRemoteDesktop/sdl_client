@@ -44,6 +44,7 @@ void get_input_event()
 				    } else {
 
 					    send.keycode = userEvent.key.keysym.sym;
+					    send.scancode = userEvent.key.keysym.scancode;
 					    SDLNet_TCP_Send(control_socket, (void * )&send, sizeof(send));
 				    } 
 
