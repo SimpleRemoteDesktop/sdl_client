@@ -41,6 +41,6 @@ void SRD_audio_decode(unsigned char* audioFrame, int size)
     memcpy(SRD_raw_audio_buffer->buffer+SRD_raw_audio_buffer->size, output_audio_raw,buffer_length);
     SRD_raw_audio_buffer->size = (size_t) SRD_raw_audio_buffer->size + (size_t) buffer_length;
     SDL_UnlockAudioDevice(audioDeviceID);
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[OPUS_DECODER : ] raw buffer size %u \n", SRD_raw_audio_buffer->size);
+    //SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[OPUS_DECODER : ] raw buffer size %u \n", SRD_raw_audio_buffer->size);
 
 }

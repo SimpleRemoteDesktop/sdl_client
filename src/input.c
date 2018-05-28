@@ -16,7 +16,7 @@ void get_input_event()
 				    break;
 
 			    case SDL_KEYDOWN: 
-				    //printf("pressed key %d\n", userEvent.key.keysym.sym);
+				    printf("pressed key %d\n", userEvent.key.keysym.sym);
 				    send.type = TYPE_KEY_DOWN;
 				    if(userEvent.key.keysym.sym == 1073742048){
 					    ctrl_press = true;
@@ -52,7 +52,7 @@ void get_input_event()
 				    break;
 
 			    case SDL_KEYUP: 
-				    //printf("released key %d\n", userEvent.key.keysym.sym);
+				    printf("released key %d\n", userEvent.key.keysym.sym);
 				    send.type = TYPE_KEY_UP;
 				    if(userEvent.key.keysym.sym == 1073742048){
 					    ctrl_press = false;
