@@ -44,3 +44,6 @@ void SRD_audio_decode(unsigned char* audioFrame, int size)
     //SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[OPUS_DECODER : ] raw buffer size %u \n", SRD_raw_audio_buffer->size);
 
 }
+#ifdef __cplusplus
+}
+#endif

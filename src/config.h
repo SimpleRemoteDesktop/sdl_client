@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
 typedef struct Screen Screen;
 struct Screen
 {
@@ -34,3 +37,6 @@ struct Configuration
 
 
 Configuration *configuration;
+#ifdef __cplusplus
+}
+#endif

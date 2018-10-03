@@ -14,4 +14,6 @@ void SRD_close();
 void SRD_start_video();
 bool close_video_thread;
 void SRD_exit();
-
+#ifdef __cplusplus
+}
+#endif

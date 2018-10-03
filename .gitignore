@@ -3,4 +3,11 @@ CMakeFiles/
 cmake-build-debug/
 src/CMakeFiles/
 windows/
+CMakeCache.txt
+Makefile
+SimpleRemoteDesktop_sdl_client.cbp
+cmake_install.cmake
+src/Makefile
+src/client
+src/cmake_install.cmake
 

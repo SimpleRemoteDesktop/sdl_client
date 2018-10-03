@@ -42,4 +42,6 @@ void SRD_init_audio(int sampleRate, int channels)
 
     SDL_PauseAudioDevice( audioDeviceID, 0);
 }
-
+#ifdef __cplusplus
+}
+#endif

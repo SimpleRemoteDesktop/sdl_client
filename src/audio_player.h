@@ -16,3 +16,6 @@ SDL_AudioDeviceID audioDeviceID;
 void SRD_init_audio(int sampleRate, int channels);
 
 #endif //SDL_CLIENT_AUDIO_PLAYER_H
+#ifdef __cplusplus
+}
+#endif

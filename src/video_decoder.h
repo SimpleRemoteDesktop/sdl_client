@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
 // remote desktop sdl client
 #include <stdbool.h>
 #include<stdint.h>

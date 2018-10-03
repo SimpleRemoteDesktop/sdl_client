@@ -203,4 +203,6 @@ int video_thread(void* configuration)
 }
 
 
-
+#ifdef __cplusplus
+}
+#endif

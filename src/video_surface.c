@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "config.h"
 #include "client.h"
 #include "video_surface.h"
