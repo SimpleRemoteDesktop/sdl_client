@@ -1,0 +1,6 @@
+.idea
+CMakeFiles/
+cmake-build-debug/
+src/CMakeFiles/
+windows/
+
