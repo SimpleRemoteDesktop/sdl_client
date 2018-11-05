@@ -1,3 +1,7 @@
+#ifndef SDL_CLIENT_GLOBAL_H
+#define SDL_CLIENT_GLOBAL_H
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,4 +16,5 @@ struct Global
 Global *global;
 #ifdef __cplusplus
 }
+#endif
 #endif

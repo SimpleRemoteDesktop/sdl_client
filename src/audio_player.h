@@ -11,11 +11,7 @@
 #include "audio_decoder.h"
 #define SDL_AUDIO_BUFFER_SIZE 960*2
 
-SDL_AudioDeviceID audioDeviceID;
 
 void SRD_init_audio(int sampleRate, int channels);
 
 #endif //SDL_CLIENT_AUDIO_PLAYER_H
-#ifdef __cplusplus
-}
-#endif

@@ -1,3 +1,7 @@
+
+#ifndef SDL_CLIENT_VIDEO_DECODER_H
+#define SDL_CLIENT_VIDEO_DECODER_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -11,18 +15,11 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
 
-AVPacket        packet;
-AVCodecContext  *pCodecCtx;
-AVFrame         *pFrame;
-AVCodecParserContext *parser;
-AVFormatContext *pFormatCtx;
-struct SwsContext *sws_ctx;
-// FIXME remove all NULL => must be restore
-
-Uint8 *yPlane, *uPlane, *vPlane;
-size_t yPlaneSz, uvPlaneSz;
-int uvPitch;
 
 int init_video_decoder(int codec_width, int codec_height);
 int decode_video_frame(uint8_t *frame,int frame_length, Configuration *conf); 
 void destroy_decoder();
+#ifdef __cplusplus
+}
+#endif
+#endif

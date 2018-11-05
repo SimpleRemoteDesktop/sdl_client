@@ -13,6 +13,21 @@ extern "C" {
 #define av_frame_free avcodec_free_frame
 #endif
 
+
+
+AVPacket        packet;
+AVCodecContext  *pCodecCtx;
+AVFrame         *pFrame;
+AVCodecParserContext *parser;
+AVFormatContext *pFormatCtx;
+struct SwsContext *sws_ctx;
+// FIXME remove all NULL => must be restore
+
+Uint8 *yPlane, *uPlane, *vPlane;
+size_t yPlaneSz, uvPlaneSz;
+int uvPitch;
+
+
 int init_video_decoder(int codec_width, int codec_height)
 {
 	AVCodec         *pCodec = NULL;
@@ -146,4 +161,6 @@ void free_video_decoder() //FIXME need to clean ?
 
 }
 
-
+#ifdef __cplusplus
+}
+#endif

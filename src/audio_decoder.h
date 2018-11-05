@@ -2,8 +2,12 @@
 // Created by sylvain on 18/04/18.
 //
 
+
 #ifndef SDL_CLIENT_AUDIO_DECODER_H
 #define SDL_CLIENT_AUDIO_DECODER_H
+
+extern "C" {
+
 #include <SDL2/SDL.h>
 #include <stdlib.h>
 
@@ -12,12 +16,10 @@ typedef struct {
     unsigned int size;
 } SRD_Raw_Audio_Buffer;
 
-SRD_Raw_Audio_Buffer * SRD_raw_audio_buffer;
-extern SDL_AudioDeviceID audioDeviceID;
 
 void SRD_audio_decoder_init(int sampleRate, int channels);
-void SRD_audio_decode(unsigned char* audioFrame, int size);
-#endif //SDL_CLIENT_AUDIO_DECODER_H
-#ifdef __cplusplus
+void SRD_audio_decode(unsigned char *audioFrame, int size);
+
 }
-#endif
+
+#endif //SDL_CLIENT_AUDIO_DECODER_H

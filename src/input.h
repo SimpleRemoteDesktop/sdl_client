@@ -1,3 +1,6 @@
+#ifndef SDL_CLIENT_INPUT_H
+#define SDL_CLIENT_INPUT_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -8,16 +11,8 @@ extern "C" {
 #include <stdio.h>
 
 
-bool ctrl_press;
-bool alt_press;
-SDL_Event userEvent;
-bool quit;
-
-
-bool screen_is_fullscreen;
-
-
 void get_input_event();
 #ifdef __cplusplus
 }
+#endif
 #endif

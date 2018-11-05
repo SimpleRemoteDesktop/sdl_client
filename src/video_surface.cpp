@@ -1,3 +1,5 @@
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -6,6 +8,19 @@ extern "C" {
 #include "video_surface.h"
 #include "video_decoder.h"
 #include "network.h"
+
+
+SDL_Window *screen;
+SDL_Texture *bmp;
+SDL_Renderer *renderer;
+SDL_Event event;
+extern Configuration *configuration;
+extern size_t yPlaneSz, uvPlaneSz;
+extern Uint8 *yPlane, *uPlane, *vPlane;
+extern int uvPitch;
+
+extern bool close_video_thread;
+extern SDL_Thread *thread;
 
 void init_video(int screen_width, int screen_height)
 {
@@ -108,3 +123,6 @@ void SRD_UpdateScreenResolution()
 			);
 	SDL_RenderSetScale(renderer, x_ratio, y_ratio);
 }
+#ifdef __cplusplus
+}
+#endif
