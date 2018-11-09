@@ -1,7 +1,6 @@
 //
 // Created by sylvain on 18/04/18.
 //
-extern "C" {
 
 #include "audio_decoder.h"
 #include <opus/opus.h>
@@ -44,5 +43,4 @@ void SRD_audio_decode(unsigned char *audioFrame, int size) {
     SDL_UnlockAudioDevice(audioDeviceID);
     //SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION,"[OPUS_DECODER : ] raw buffer size %u \n", SRD_raw_audio_buffer->size);
 
-}
 }

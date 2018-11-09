@@ -6,7 +6,6 @@
 #ifndef SDL_CLIENT_AUDIO_DECODER_H
 #define SDL_CLIENT_AUDIO_DECODER_H
 
-extern "C" {
 
 #include <SDL2/SDL.h>
 #include <stdlib.h>
@@ -20,6 +19,6 @@ typedef struct {
 void SRD_audio_decoder_init(int sampleRate, int channels);
 void SRD_audio_decode(unsigned char *audioFrame, int size);
 
-}
+
 
 #endif //SDL_CLIENT_AUDIO_DECODER_H

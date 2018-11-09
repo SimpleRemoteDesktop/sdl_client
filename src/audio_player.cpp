@@ -1,5 +1,4 @@
 
-extern "C" {
 #include "audio_player.h"
 SDL_AudioSpec wanted_spec, spec;
 
@@ -42,6 +41,5 @@ void SRD_init_audio(int sampleRate, int channels) {
     }
 
     SDL_PauseAudioDevice(audioDeviceID, 0);
-}
 }
 

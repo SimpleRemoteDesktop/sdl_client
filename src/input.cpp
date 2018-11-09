@@ -1,6 +1,3 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include "config.h"
 #include "input.h"
 #include "network.h"
@@ -137,6 +134,4 @@ void get_input_event() {
         }
     }
 }
-#ifdef __cplusplus
-}
-#endif
+

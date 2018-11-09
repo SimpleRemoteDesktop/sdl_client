@@ -1,8 +1,3 @@
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include "config.h"
 #include "client.h"
 #include "video_surface.h"
@@ -123,6 +118,4 @@ void SRD_UpdateScreenResolution()
 			);
 	SDL_RenderSetScale(renderer, x_ratio, y_ratio);
 }
-#ifdef __cplusplus
-}
-#endif
+

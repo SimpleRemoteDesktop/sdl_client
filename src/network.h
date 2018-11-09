@@ -1,10 +1,6 @@
 #ifndef SDL_CLIENT_NETWORK_H
 #define SDL_CLIENT_NETWORK_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdbool.h>
 #include<stdint.h>
 #include<time.h>
@@ -13,19 +9,15 @@ extern "C" {
 #include <SDL2/SDL_net.h>
 #include <SDL2/SDL_thread.h>
 
-#ifdef __MINGW32__
-#undef main /* Prevents SDL from overriding main() */
-#endif
-
 #include <stdio.h>
+#include <string>
 #include "audio_decoder.h"
+#include "Queue.h"
+#include "Frame.h"
 
-#define VIDEO_FRAME 1
-#define AUDIO_FRAME 2
 
 #define INBUF_SIZE 1000000
 #define FF_INPUT_BUFFER_PADDING_SIZE 32
-
 
 
 enum type {
@@ -52,43 +44,24 @@ struct Message {
     int sdl;
 };
 
+class Network {
+public:
+    void SRDNet_Empty_input_buffer();
+    int init_network(Queue<Frame> *video, Queue<Frame> *audio);
+    void connect(std::string hostname, int port);
+    int SRDNet_get_frame_number();
+    int SRDNet_get_frame_length();
+    void SRD_ensure(int nbytes);
+    int SRD_readUInt32();
+    uint8_t *SRD_read(int nbytes);
+    int SRDNet_send_start_packet();
+    int SRDNet_send_stop_packet();
+    int SRDNet_get_frame_type();
 
-typedef struct {
-    int type;
-    int length;
-    uint8_t *data;
-
-} Video_Frame;
-
-typedef struct Video_Frame_Element Video_Frame_Element;
-struct Video_Frame_Element {
-    Video_Frame *frame;
-    Video_Frame_Element *next;
-
+    Queue<Frame> *videoQueue;
+    Queue<Frame> *audioQueue;
 };
 
-typedef struct {
-    Video_Frame_Element *first;
-    int length;
+int network_thread(void *data);
 
-} Video_Buffer;
-
-
-void SRDNet_Empty_input_buffer();
-int init_network();
-int SRDNet_get_frame_number();
-int SRDNet_get_frame_length();
-void SRD_ensure(int nbytes);
-int SRD_readUInt32();
-uint8_t *SRD_read(int nbytes);
-int SRDNet_send_start_packet();
-int SRDNet_send_stop_packet();
-Video_Frame *pop_from_video_fifo();
-void push_to_video_fifo(Video_Frame_Element *element);
-int network_thread(void *configuration);
-void clean_video_fifo();
-
-#ifdef __cplusplus
-}
-#endif
 #endif

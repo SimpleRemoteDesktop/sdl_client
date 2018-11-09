@@ -1,4 +1,3 @@
-extern "C" {
 // remote desktop sdl client
 #ifdef __MINGW32__
 #undef main /* Prevents SDL from overriding main() */
@@ -22,6 +21,10 @@ Configuration *configuration;
 extern AVPacket packet;
 bool close_video_thread;
 SDL_Thread *thread;
+
+Network *network;
+Queue<Frame> *videoQueue;
+Queue<Frame> *audioQueue;
 
 int main(int argc, char *argv[]) {
 
@@ -124,8 +127,12 @@ int main(int argc, char *argv[]) {
                     configuration->maxScreenSize->width, configuration->maxScreenSize->height);
 
     }
+    // create queue
+    videoQueue = new Queue<Frame>;
+    audioQueue = new Queue<Frame>;
     //init network and send start packet
-    if (init_network()) {
+    network = new Network();
+    if (network->init_network(videoQueue, audioQueue)) {
         // TODO init network error
         SRD_exit();
     }
@@ -151,7 +158,7 @@ int main(int argc, char *argv[]) {
 
 void SRD_start_video() {
     thread = SDL_CreateThread(video_thread, "video_thread", configuration);
-    SRDNet_send_start_packet();
+    network->SRDNet_send_start_packet();
 }
 
 void SRD_init_renderer(Configuration *configuration) {
@@ -179,15 +186,11 @@ int video_thread(void *configuration) {
         av_init_packet(&packet);
 
 
-        Video_Frame *frame = pop_from_video_fifo();
-        if (frame != NULL) {
+        Frame frame = videoQueue->pop();
+        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame size : %d", frame.size);
+        decode_video_frame(frame.data, frame.size, (Configuration *) configuration);
+        update_video_surface();
 
-            SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame size : %d", frame->length);
-            decode_video_frame(frame->data, frame->length, (Configuration *) configuration);
-            update_video_surface();
-            free(frame);
-
-        }
 
     }
     //	SRDNet_Empty_input_buffer();
@@ -195,5 +198,4 @@ int video_thread(void *configuration) {
     SRD_close_renderer((Configuration *) configuration);
 
     return 0;
-}
 }
