@@ -5,7 +5,6 @@
 uint8_t inbuf[INBUF_SIZE + FF_INPUT_BUFFER_PADDING_SIZE];
 int inbuf_average;
 
-TCPsocket control_socket;
 IPaddress ip;
 SDL_Thread *netThread;
 extern Configuration *configuration;

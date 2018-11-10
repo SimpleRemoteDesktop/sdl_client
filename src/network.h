@@ -62,6 +62,7 @@ public:
     Queue<Frame> *audioQueue;
     std::string hostname;
     int port;
+    TCPsocket control_socket;
 };
 
 int network_thread(void *data);
