@@ -4,8 +4,9 @@
 
 uint8_t inbuf[INBUF_SIZE + FF_INPUT_BUFFER_PADDING_SIZE];
 int inbuf_average;
-IPaddress ip;
+
 TCPsocket control_socket;
+IPaddress ip;
 SDL_Thread *netThread;
 extern Configuration *configuration;
 
@@ -15,11 +16,13 @@ int Network::init_network(Queue<Frame> *video, Queue<Frame> *audio) {
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Init network interface");
     if (SDLNet_Init() < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDLNet_Init: %s\n", SDLNet_GetError());
-        return 0;
+        return 1;
     }
 
     this->videoQueue = video;
     this->audioQueue = audio;
+    this->connect(this->hostname, this->port);
+    return 0;
 
 }
 

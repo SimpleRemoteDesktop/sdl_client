@@ -60,6 +60,8 @@ public:
 
     Queue<Frame> *videoQueue;
     Queue<Frame> *audioQueue;
+    std::string hostname;
+    int port;
 };
 
 int network_thread(void *data);

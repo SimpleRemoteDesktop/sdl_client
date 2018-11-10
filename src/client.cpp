@@ -134,6 +134,7 @@ int main(int argc, char *argv[]) {
     network = new Network();
     if (network->init_network(videoQueue, audioQueue)) {
         // TODO init network error
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, " network init error exiting");
         SRD_exit();
     }
     init_video(configuration->screen->width, configuration->screen->height); //FIXME return status code
@@ -174,6 +175,7 @@ void SRD_close_renderer(Configuration *configuration) {
 }
 
 void SRD_exit() {
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "exiting application");
     exit(1);
 }
 
