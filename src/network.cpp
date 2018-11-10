@@ -139,6 +139,10 @@ void Network::connect(std::string hostname, int port) {
     netThread = SDL_CreateThread(network_thread, "network_thread", this);
 }
 
+int Network::send(Message *message) {
+    return SDLNet_TCP_Send(control_socket, (void *) message, sizeof(Message));
+}
+
 
 int network_thread(void *data) {
     Network *network = (Network *) data;

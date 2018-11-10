@@ -57,7 +57,7 @@ public:
     int SRDNet_send_start_packet();
     int SRDNet_send_stop_packet();
     int SRDNet_get_frame_type();
-
+    int send(Message* message);
     Queue<Frame> *videoQueue;
     Queue<Frame> *audioQueue;
     std::string hostname;

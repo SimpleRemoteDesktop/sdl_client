@@ -9,8 +9,8 @@ SDL_Event userEvent;
 bool quit = false;
 
 bool screen_is_fullscreen = 0;
-extern TCPsocket control_socket;
 extern SDL_Window *screen;
+extern Network *network;
 
 void get_input_event() {
     if (SDL_WaitEvent(&userEvent)) {
@@ -49,7 +49,7 @@ void get_input_event() {
 
                     send.keycode = userEvent.key.keysym.sym;
                     send.scancode = userEvent.key.keysym.scancode;
-                    SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                    network->send(&send);
                 }
 
 
@@ -67,7 +67,7 @@ void get_input_event() {
 
                 send.keycode = userEvent.key.keysym.sym;
                 send.scancode = userEvent.key.keysym.scancode;
-                SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                network->send(&send);
                 break;
 
             case SDL_MOUSEMOTION:
@@ -78,7 +78,7 @@ void get_input_event() {
 
                 send.x = ((float) userEvent.motion.x / (float) w);
                 send.y = ((float) userEvent.motion.y / (float) h);
-                SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                network->send(&send);
                 break;
             case SDL_MOUSEBUTTONDOWN: {
                 send.type = TYPE_MOUSE_DOWN;
@@ -86,23 +86,23 @@ void get_input_event() {
                     case SDL_BUTTON_LEFT: {
                         //printf("left click down\n");
                         send.button = 1;
-                        SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                        network->send(&send);
                         break;
                     }
                     case SDL_BUTTON_RIGHT: {
                         //printf("right click down\n");
                         send.button = 3;
-                        SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                        network->send(&send);
                         break;
                     }
                     case SDL_BUTTON_MIDDLE: {
                         //printf("middle click down\n");
                         send.button = 2;
-                        SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                        network->send(&send);
                         break;
                     }
                 }
-                SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                network->send(&send);
                 break;
             }
 
@@ -112,23 +112,23 @@ void get_input_event() {
                     case SDL_BUTTON_LEFT: {
                         //printf("left click released\n");
                         send.button = 1;
-                        SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                        network->send(&send);
                         break;
                     }
                     case SDL_BUTTON_RIGHT: {
                         //printf("right click released\n");
                         send.button = 3;
-                        SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                        network->send(&send);
                         break;
                     }
                     case SDL_BUTTON_MIDDLE: {
                         //printf("middle click released\n");
                         send.button = 2;
-                        SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                        network->send(&send);
                         break;
                     }
                 }
-                SDLNet_TCP_Send(control_socket, (void *) &send, sizeof(send));
+                network->send(&send);
                 break;
             }
         }
