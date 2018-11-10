@@ -44,7 +44,7 @@ int init_video_decoder(int codec_width, int codec_height) {
     pCodecCtx->pix_fmt = AV_PIX_FMT_YUV420P;
 
 
-    pCodecCtx->flags |= CODEC_FLAG_TRUNCATED; // FIXME not sure is used;
+    //pCodecCtx->flags |= CODEC_FLAG_TRUNCATED; // FIXME not sure is used;
 
 
     // Open codec
