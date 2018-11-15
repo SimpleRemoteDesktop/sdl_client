@@ -8,6 +8,8 @@
 #include<stdint.h>
 #include<time.h>
 #include <stdio.h>
+#include "Frame.h"
+#include "Image.h"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -15,7 +17,19 @@ extern "C" {
 #include <libswscale/swscale.h>
 };
 
-int init_video_decoder(int codec_width, int codec_height);
-int decode_video_frame(uint8_t *frame,int frame_length, Configuration *conf); 
-void destroy_decoder();
+class SoftwareVideoDecoder {
+public:
+    SoftwareVideoDecoder(int codecWidth, int codecHeight);
+    ~SoftwareVideoDecoder();
+    void decode(Frame *frame, Image* image);
+    void run();
+
+private:
+    int codecWidth;
+    int codecHeight;
+    AVFrame *pFrame;
+    AVCodecContext *pCodecCtx;
+    SwsContext *sws_ctx;
+};
+
 #endif

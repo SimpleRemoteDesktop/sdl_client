@@ -16,15 +16,8 @@
 
 //memset(inbuf+INBUF_SIZE, 0, FF_INPUT_BUFFER_PADDING_SIZE);
 
-extern bool quit;
 Configuration *configuration;
-extern AVPacket packet;
-bool close_video_thread;
-SDL_Thread *thread;
 
-Network *network;
-Queue<Frame> *videoQueue;
-Queue<Frame> *audioQueue;
 
 int main(int argc, char *argv[]) {
 
@@ -40,7 +33,7 @@ int main(int argc, char *argv[]) {
 
     // set log level
 
-    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 
     // default value workaround
     //
@@ -58,8 +51,6 @@ int main(int argc, char *argv[]) {
     configuration->bandwidth = 1000000;
     configuration->fps = 25;
 
-    close_video_thread = false;
-    // parsing arguments
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "init() \n");
 
@@ -127,77 +118,15 @@ int main(int argc, char *argv[]) {
                     configuration->maxScreenSize->width, configuration->maxScreenSize->height);
 
     }
-    // create queue
-    videoQueue = new Queue<Frame>;
-    audioQueue = new Queue<Frame>;
-    //init network and send start packet
-    network = new Network();
-    if (network->init_network(videoQueue, audioQueue)) {
-        // TODO init network error
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, " network init error exiting");
-        SRD_exit();
-    }
-    init_video(configuration->screen->width, configuration->screen->height); //FIXME return status code
-    SRD_audio_decoder_init(48000, 2); //FIXME return status code + unfix args
-    SRD_init_audio(48000, 2); //FIXME return status code + unfix args
-
-    SRD_start_video();
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                "start input event loop\n "); //EVENT LOOP FOR CATCH INPUT EVENT //TODO REFACTOR
-    for (;;) {
-
-        // get event from loop // TODO check code
-        get_input_event();
-
-
-        if (quit)
-            break;
-    }
-    return 0;
-
+    std::string hostname(strdup(argv[1]));
+    int port = atoi(argv[2]);
+    PlayerManager *player = new PlayerManager(hostname, port, 1280, 720, 1000000, 30);
+    player->start();
 }
 
-void SRD_start_video() {
-    thread = SDL_CreateThread(video_thread, "video_thread", configuration);
-    network->SRDNet_send_start_packet();
-}
-
-void SRD_init_renderer(Configuration *configuration) {
-    SRD_init_renderer_texture(configuration->codec->width, configuration->codec->height);
-    init_video_decoder(configuration->codec->width, configuration->codec->height);
-
-
-}
-
-void SRD_close_renderer(Configuration *configuration) {
-    destroy_decoder();
-    destroy_texture();
-}
 
 void SRD_exit() {
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "exiting application");
     exit(1);
 }
 
-int video_thread(void *configuration) {
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Starting video thread");
-    SRD_init_renderer((Configuration *) configuration);
-
-    close_video_thread = false;
-    while (close_video_thread == false) {
-        av_init_packet(&packet);
-
-
-        Frame frame = videoQueue->pop();
-        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame size : %d", frame.size);
-        decode_video_frame(frame.data, frame.size, (Configuration *) configuration);
-        update_video_surface();
-
-
-    }
-    //	SRDNet_Empty_input_buffer();
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "finish and cleaning video thread");
-    SRD_close_renderer((Configuration *) configuration);
-
-    return 0;
-}

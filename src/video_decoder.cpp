@@ -11,22 +11,12 @@
 #endif
 
 
-AVPacket packet;
-AVCodecContext *pCodecCtx;
-AVFrame *pFrame;
-AVCodecParserContext *parser;
-AVFormatContext *pFormatCtx;
-struct SwsContext *sws_ctx;
-// FIXME remove all NULL => must be restore
+SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
+    this->codecWidth = codecWidth;
+    this->codecHeight = codecHeight;
 
-Uint8 *yPlane, *uPlane, *vPlane;
-size_t yPlaneSz, uvPlaneSz;
-int uvPitch;
-
-
-int init_video_decoder(int codec_width, int codec_height) {
     AVCodec *pCodec = NULL;
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "starting with codec resolution %dx%d", codec_width, codec_height);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "starting with codec resolution %dx%d", codecWidth, codecHeight);
     av_register_all();
     avformat_network_init(); //FIXME alway use ?
 
@@ -34,25 +24,20 @@ int init_video_decoder(int codec_width, int codec_height) {
     pCodec = avcodec_find_decoder(AV_CODEC_ID_H264);
     if (pCodec == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unsupported codec!\n");
-        return -1; // Codec not found
+        //FIXME : thorw error
     }
 
     // Copy context
-    pCodecCtx = avcodec_alloc_context3(pCodec);
-    pCodecCtx->width = codec_width; //TODO set value
-    pCodecCtx->height = codec_height; // TODO set value
-    pCodecCtx->pix_fmt = AV_PIX_FMT_YUV420P;
-
-
-    //pCodecCtx->flags |= CODEC_FLAG_TRUNCATED; // FIXME not sure is used;
-
+    this->pCodecCtx = avcodec_alloc_context3(pCodec);
+    pCodecCtx->width = codecWidth; //TODO set value
+    pCodecCtx->height = codecHeight; // TODO set value
+    pCodecCtx->pix_fmt = AV_PIX_FMT_YUV420P; // TODO must support multiple value
 
     // Open codec
-    if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0)
-        return -1; // Could not open codec
+    if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
+        // FIXME throw error
+    }
 
-    // Allocate video frame
-    pFrame = av_frame_alloc();
 
 
     // initialize SWS context for software scaling
@@ -68,36 +53,25 @@ int init_video_decoder(int codec_width, int codec_height) {
                              NULL,
                              NULL,
                              NULL
-    );
+    ); //TODO is used ?
 
 
+
+
+}
+
+void SoftwareVideoDecoder::decode(Frame *frame, Image *image) {
+    // Allocate video frame
+    pFrame = av_frame_alloc();
+
+    AVPacket packet;
     // received data loop
     packet.data = NULL;
     packet.size = 0;
+    av_init_packet(&packet);
 
-    parser = av_parser_init(pCodecCtx->codec_id);
-    parser->flags |= PARSER_FLAG_ONCE;
-    return 1; // TODO
-}
-
-void destroy_decoder() {
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " Closing decoder");
-    avcodec_close(pCodecCtx);
-    av_free(pCodecCtx);
-    sws_freeContext(sws_ctx);
-}
-
-int decode_video_frame(uint8_t *frame, int frame_length, Configuration *conf) {
-
-
-    //Video decode part
-
-
-
-
-
-    packet.data = frame;
-    packet.size = frame_length;
+    packet.data = frame->data;
+    packet.size = frame->size;
 
     while (packet.size > 0) {
 
@@ -113,19 +87,17 @@ int decode_video_frame(uint8_t *frame, int frame_length, Configuration *conf) {
         // Did we get a video frame?
         if (frameFinished) {
             AVPicture pict;
-            pict.data[0] = yPlane;
-            pict.data[1] = uPlane;
-            pict.data[2] = vPlane;
-            pict.linesize[0] = conf->screen->width;
-            pict.linesize[1] = uvPitch;
-            pict.linesize[2] = uvPitch;
+            pict.data[0] = image->yPlane;
+            pict.data[1] = image->uPlane;
+            pict.data[2] = image->vPlane;
+            pict.linesize[0] = image->width;
+            pict.linesize[1] = image->uvPitch;
+            pict.linesize[2] = image->uvPitch;
 
             // Convert the image into YUV format that SDL uses
             sws_scale(sws_ctx, (uint8_t const *const *) pFrame->data,
                       pFrame->linesize, 0, pCodecCtx->height,
                       pict.data, pict.linesize);
-
-            update_video_surface(); //FIXME args
 
         }
         if (packet.data) {
@@ -134,23 +106,9 @@ int decode_video_frame(uint8_t *frame, int frame_length, Configuration *conf) {
         }
         av_free_packet(&packet);
     }
-
-    return 1; //TODO
 }
 
-
-void free_video_decoder() //FIXME need to clean ?
-{
-    // Free the YUV frame
+SoftwareVideoDecoder::~SoftwareVideoDecoder() {
     av_frame_free(&pFrame);
-
-    // Close the codec
     avcodec_close(pCodecCtx);
-
-    // Close the video file
-    avformat_close_input(&pFormatCtx);
-
-
 }
-
-

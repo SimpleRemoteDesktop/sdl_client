@@ -6,8 +6,20 @@
 #include<stdint.h>
 #include<time.h>
 #include <stdio.h>
+#include "network.h"
+#include "PlayerManager.h"
 
 
-void get_input_event();
+class InputHandler {
+public:
+    InputHandler(Network *network, PlayerManager* playerManager);
+    void run();
+private:
+    Network *network;
+    bool ctrl_press = false;
+    bool alt_press = false;
+    PlayerManager *appManager;
+    bool isRunning;
+};
 
 #endif

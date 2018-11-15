@@ -1,17 +1,11 @@
 
-#include "config.h"
+#include <cstring>
 #include "network.h"
-
-uint8_t inbuf[INBUF_SIZE + FF_INPUT_BUFFER_PADDING_SIZE];
-int inbuf_average;
-
-IPaddress ip;
-SDL_Thread *netThread;
-extern Configuration *configuration;
 
 
 int Network::init_network(Queue<Frame> *video, Queue<Frame> *audio) {
     inbuf_average = 0;
+    this->inbuf = new uint8_t[500000];
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Init network interface");
     if (SDLNet_Init() < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDLNet_Init: %s\n", SDLNet_GetError());
@@ -20,12 +14,9 @@ int Network::init_network(Queue<Frame> *video, Queue<Frame> *audio) {
 
     this->videoQueue = video;
     this->audioQueue = audio;
-    this->connect(this->hostname, this->port);
-    return 0;
-
 }
 
-int Network::SRDNet_send_start_packet() {
+int Network::SRDNet_send_start_packet(int codecWidth, int codecHeight, int bandwidth, int fps) {
     // inital packet with information
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " network : sending start packet");
     struct Message init;
@@ -34,10 +25,10 @@ int Network::SRDNet_send_start_packet() {
     init.y = 1;
     init.button = 1;
     init.keycode = 1;
-    init.fps = configuration->fps;
-    init.codec_width = configuration->codec->width;
-    init.codec_height = configuration->codec->height;
-    init.bandwidth = configuration->bandwidth;
+    init.fps = fps;
+    init.codec_width = codecWidth;
+    init.codec_height = codecHeight;
+    init.bandwidth = bandwidth;
     init.sdl = 0;
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION,
                    "sending init frame : type: %d, fps: %d, codec width: %d, codec height: %d, bandwidth: %d",
@@ -90,6 +81,7 @@ void Network::SRD_ensure(int nbytes) {
             // TCP Connection is broken. (because of error or closure)
             SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Broken socket disconnected");
             SDLNet_TCP_Close(control_socket);
+            //FIXME
 
         } else {
             memcpy(inbuf + inbuf_average, net_in, net_lenght);
@@ -113,19 +105,20 @@ int Network::SRD_readUInt32() {
 }
 
 uint8_t *Network::SRD_read(int nbytes) {
-    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "average byte : %d, read bytes : %d \n", inbuf_average, nbytes);
-    uint8_t *data = (uint8_t *) malloc(sizeof(uint8_t) * nbytes);
-    memcpy(data, inbuf, nbytes);
-    memcpy(inbuf, inbuf + nbytes, inbuf_average - nbytes);
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "average byte : %d, read bytes : %d \n", this->inbuf_average, nbytes);
+    uint8_t *data = new uint8_t[nbytes];
+    std::memcpy(data, this->inbuf, nbytes) ;
+    std::memcpy(this->inbuf, this->inbuf + nbytes, this->inbuf_average - nbytes ) ;
     inbuf_average -= nbytes;
     return data;
 }
 
 void Network::connect(std::string hostname, int port) {
-    if (SDLNet_ResolveHost(&ip, configuration->server->hostname, configuration->server->port) < 0) {
+    IPaddress ip;
+    if (SDLNet_ResolveHost(&ip, hostname.c_str(), port) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "unable to resolve address %s , port %d\n",
-                     configuration->server->hostname,
-                     configuration->server->port);
+                     hostname.c_str(),
+                     port);
         //TODO throw error
     }
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "connecting to server");
@@ -135,7 +128,6 @@ void Network::connect(std::string hostname, int port) {
         //TODO throw error
     }
 
-    netThread = SDL_CreateThread(network_thread, "network_thread", this);
 }
 
 int Network::send(Message *message) {
@@ -143,31 +135,30 @@ int Network::send(Message *message) {
 }
 
 
-int network_thread(void *data) {
-    Network *network = (Network *) data;
+void Network::run() {
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "starting network thread");
-    while (true) {
+    this->isRunning = true;
+    while (this->isRunning) {
 
         // get frame from network
-        FRAME_TYPE type = (FRAME_TYPE) network->SRDNet_get_frame_type();
+        FRAME_TYPE type = (FRAME_TYPE) this->SRDNet_get_frame_type();
         SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame type %d", type);
-        int length = network->SRDNet_get_frame_length();
+        int length = this->SRDNet_get_frame_length();
         SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame length %d", length);
 
-        network->SRD_ensure(length);
+        this->SRD_ensure(length);
         Frame *frame = new Frame();
-        frame->data = network->SRD_read(length);
+        frame->data = this->SRD_read(length);
         frame->size = length;
         frame->type = type;
 
         if (frame->type == VIDEO_FRAME) {
-            network->videoQueue->push(*frame);
+            this->videoQueue->push(*frame);
         } else if (frame->type == AUDIO_FRAME) {
             SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "AUDIO frame length %d", frame->size);
-            SRD_audio_decode(frame->data, frame->size);
+            this->audioQueue->push(*frame);
         } else {
-
-            SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Unknow frame type %d", frame->type);
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Unknow frame type %d", frame->type);
         }
     }
 }

@@ -21,7 +21,7 @@ void SRD_audio_decoder_init(int sampleRate, int channels) {
     decoder = opus_decoder_create(sampleRate, channels, &err);
     if (err < 0) {
         fprintf(stderr, "failed to create decoder: %s\n", opus_strerror(err));
-        return exit(1); //FIXME
+        //FIXME
     }
 }
 
@@ -34,7 +34,7 @@ void SRD_audio_decode(unsigned char *audioFrame, int size) {
                                  0);
     if (frame_size < 0) {
         fprintf(stderr, "decoder failed: %s\n", opus_strerror(frame_size));
-        exit(1); //FIXME
+        //FIXME
     }
     unsigned int buffer_length = frame_size * 2 * sizeof(opus_int16); //FIXME  channels numbers
     SDL_LockAudioDevice(audioDeviceID);
