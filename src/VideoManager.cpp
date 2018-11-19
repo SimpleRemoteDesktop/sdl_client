@@ -24,6 +24,7 @@ void VideoManager::run() {
         Image *image = new Image(this->screenWidth, this->screenHeight);
         this->decoder->decode(&frame, image);
         this->surface->update_video_surface(image);
+        delete(frame.data);
         //delete &frame; // FIXME
         delete image;
     }
