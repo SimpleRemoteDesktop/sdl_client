@@ -1,6 +1,5 @@
 #include <SDL2/SDL_net.h>
 
-#include "config.h"
 #include "video_decoder.h"
 #include "video_surface.h"
 

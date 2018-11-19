@@ -1,4 +1,3 @@
-#include "config.h"
 #include "input.h"
 #include "network.h"
 #include "video_surface.h"

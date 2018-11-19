@@ -8,7 +8,9 @@
 
 #include <stdint-gcc.h>
 
-enum FRAME_TYPE { VIDEO_FRAME = 1, AUDIO_FRAME =2 };
+enum FRAME_TYPE {
+    VIDEO_FRAME = 1, AUDIO_FRAME = 2
+};
 
 class Frame {
 public:
@@ -16,7 +18,8 @@ public:
 
     }
 
-    uint8_t* data;
+    bool quit;
+    uint8_t *data;
     int size;
     FRAME_TYPE type;
 
