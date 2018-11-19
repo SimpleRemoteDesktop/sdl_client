@@ -5,7 +5,7 @@
 
 int Network::init_network(Queue<Frame> *video, Queue<Frame> *audio) {
     inbuf_average = 0;
-    this->inbuf = new uint8_t[500000];
+    this->inbuf = new uint8_t[5000000];
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Init network interface");
     if (SDLNet_Init() < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDLNet_Init: %s\n", SDLNet_GetError());
@@ -74,7 +74,7 @@ void Network::SRDNet_Empty_input_buffer() {
 }
 
 void Network::SRD_ensure(int nbytes) {
-    char net_in[nbytes + 1];
+    char net_in[nbytes];
     do {
         int net_lenght = SDLNet_TCP_Recv(control_socket, net_in, nbytes); //FIXME : adjust max data
         if (net_lenght <= 0) {

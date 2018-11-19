@@ -43,29 +43,17 @@ struct Message {
 class Network {
 public:
     void SRDNet_Empty_input_buffer();
-
     void run();
-
     int init_network(Queue<Frame> *video, Queue<Frame> *audio);
-
     void connect(std::string hostname, int port);
-
     int SRDNet_get_frame_number();
-
     int SRDNet_get_frame_length();
-
     void SRD_ensure(int nbytes);
-
     int SRD_readUInt32();
-
     uint8_t *SRD_read(int nbytes);
-
     int SRDNet_send_start_packet(int codecWidth, int codecHeight, int bandwidth, int fps);
-
     int SRDNet_send_stop_packet();
-
     int SRDNet_get_frame_type();
-
     int send(Message *message);
 
     Queue<Frame> *videoQueue;
