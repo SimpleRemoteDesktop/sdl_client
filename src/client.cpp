@@ -82,20 +82,20 @@ int main(int argc, char *argv[]) {
     if (should_be_zero != 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not get Current display resolution %s", SDL_GetError());
     } else {
-        width = current.w;
-        height = current.h;
+//        width = current.w;
+//        height = current.h;
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "max screen resolution, width : %d, height: %d", width, height);
 
     }
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                "parameters hostname : %s, port : %d, video resolution : %sx%s, bandwidth : %d, fps : %d \n",
+   /* SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                "parameters hostname : %s, port : %d, video resolution : %sx%s, bandwidth : %d, fps : %d\n",
                 hostname.c_str(),
                 port,
                 width,
                 height,
                 bandwidth,
-                fps);
+                fps);*/
 
     PlayerManager *player = new PlayerManager(hostname, port, width, height, bandwidth, fps);
     player->start();
