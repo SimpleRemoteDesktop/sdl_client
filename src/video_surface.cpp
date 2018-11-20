@@ -1,4 +1,3 @@
-#include <gmpxx.h>
 #include "video_surface.h"
 #include "video_decoder.h"
 #include "network.h"

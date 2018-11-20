@@ -1,6 +1,7 @@
 // remote desktop sdl client
 #ifdef __MINGW32__
 #undef main /* Prevents SDL from overriding main() */
+#define SDL_MAIN_HANDLED
 #endif
 
 #include <stdio.h>
@@ -15,7 +16,7 @@
 //memset(inbuf+INBUF_SIZE, 0, FF_INPUT_BUFFER_PADDING_SIZE);
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char **argv) {
 
     // Declare display mode structure to be filled in.
     SDL_DisplayMode current;

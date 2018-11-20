@@ -5,30 +5,38 @@
 #ifndef SIMPLEREMOTEDESKTOP_SDL_CLIENT_QUEUE_H
 #define SIMPLEREMOTEDESKTOP_SDL_CLIENT_QUEUE_H
 
-#include <mutex>
 #include <condition_variable>
 #include <deque>
+#include <SDL2/SDL_mutex.h>
 
 template<typename T>
 class Queue {
 private:
-    std::mutex d_mutex;
-    std::condition_variable d_condition;
+    SDL_mutex *d_mutex;
+    SDL_cond *d_condition;
     std::deque<T> d_queue;
 public:
+    Queue() {
+        d_mutex = SDL_CreateMutex();
+        d_condition = SDL_CreateCond();
+    }
     void push(T const &value) {
         {
-            std::unique_lock<std::mutex> lock(this->d_mutex);
+            SDL_LockMutex(this->d_mutex);
             d_queue.push_front(value);
         }
-        this->d_condition.notify_one();
+            SDL_CondSignal(this->d_condition);
+        SDL_UnlockMutex(this->d_mutex);
     }
 
     T pop() {
-        std::unique_lock<std::mutex> lock(this->d_mutex);
-        this->d_condition.wait(lock, [=] { return !this->d_queue.empty(); });
+        SDL_LockMutex(this->d_mutex);
+        while(this->d_queue.empty()) {
+            SDL_CondWait(this->d_condition, this->d_mutex);
+        }
         T rc(std::move(this->d_queue.back()));
         this->d_queue.pop_back(); //TODO destroy frame ?
+        SDL_UnlockMutex(this->d_mutex);
         return rc;
     }
 
