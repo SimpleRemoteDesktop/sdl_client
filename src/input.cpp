@@ -82,13 +82,13 @@ void InputHandler::run() {
                         }
                         case SDL_BUTTON_RIGHT: {
                             //printf("right click down\n");
-                            send.button = 3;
+                            send.button = 2;
                             network->send(&send);
                             break;
                         }
                         case SDL_BUTTON_MIDDLE: {
                             //printf("middle click down\n");
-                            send.button = 2;
+                            send.button = 3;
                             network->send(&send);
                             break;
                         }
@@ -108,13 +108,13 @@ void InputHandler::run() {
                         }
                         case SDL_BUTTON_RIGHT: {
                             //printf("right click released\n");
-                            send.button = 3;
+                            send.button = 2;
                             network->send(&send);
                             break;
                         }
                         case SDL_BUTTON_MIDDLE: {
                             //printf("middle click released\n");
-                            send.button = 2;
+                            send.button = 3;
                             network->send(&send);
                             break;
                         }
