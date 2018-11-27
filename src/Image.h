@@ -11,6 +11,7 @@
 class Image {
 public:
     Image(int width, int height);
+    ~Image();
 
     int width;
     int height;

@@ -36,7 +36,7 @@ void SRD_init_audio(int sampleRate, int channels) {
 
     audioDeviceID = SDL_OpenAudioDevice(NULL, 0, &wanted_spec, &spec, SDL_AUDIO_ALLOW_FORMAT_CHANGE);
     if (audioDeviceID < 0) {
-        fprintf(stderr, "SDL_OpenAudio: %s\n", SDL_GetError());
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "SDL_OpenAudio: %s\n", SDL_GetError());
         //FIXME return bad init
     }
 

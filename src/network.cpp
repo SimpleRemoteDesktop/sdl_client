@@ -19,21 +19,21 @@ int Network::init_network(Queue<Frame> *video, Queue<Frame> *audio) {
 int Network::SRDNet_send_start_packet(int codecWidth, int codecHeight, int bandwidth, int fps) {
     // inital packet with information
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " network : sending start packet");
-    struct Message init;
-    init.type = TYPE_ENCODER_START;
-    init.x = 1;
-    init.y = 1;
-    init.button = 1;
-    init.keycode = 1;
-    init.fps = fps;
-    init.codec_width = codecWidth;
-    init.codec_height = codecHeight;
-    init.bandwidth = bandwidth;
-    init.sdl = 0;
-    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION,
+    Message *init = new Message() ;
+    init->type = TYPE_ENCODER_START;
+    init->x = 1;
+    init->y = 1;
+    init->button = 1;
+    init->keycode = 1;
+    init->fps = fps;
+    init->codec_width = codecWidth;
+    init->codec_height = codecHeight;
+    init->bandwidth = bandwidth;
+    init->sdl = 0;
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
                    "sending init frame : type: %d, fps: %d, codec width: %d, codec height: %d, bandwidth: %d",
-                   init.type, init.fps, init.codec_width, init.codec_height, init.bandwidth);
-    SDLNet_TCP_Send(control_socket, (void *) &init, sizeof(init));
+                   init->type, init->fps, init->codec_width, init->codec_height, init->bandwidth);
+    this->send(init);
     return 0;
 
 }
@@ -102,6 +102,7 @@ int Network::SRD_readUInt32() {
             (uint32_t) data[1] << 8 |
             (uint32_t) data[0];
     return num;
+
 }
 
 uint8_t *Network::SRD_read(int nbytes) {
@@ -131,7 +132,8 @@ void Network::connect(std::string hostname, int port) {
 }
 
 int Network::send(Message *message) {
-    return SDLNet_TCP_Send(control_socket, (void *) message, sizeof(Message));
+    int res = SDLNet_TCP_Send(control_socket, (void *) message, sizeof(Message));
+    return res;
 }
 
 
@@ -145,7 +147,6 @@ void Network::run() {
         SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame type %d", type);
         int length = this->SRDNet_get_frame_length();
         SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "frame length %d", length);
-
         this->SRD_ensure(length);
         Frame *frame = new Frame();
         frame->data = this->SRD_read(length);
@@ -157,6 +158,11 @@ void Network::run() {
         } else if (frame->type == AUDIO_FRAME) {
             SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "AUDIO frame length %d", frame->size);
             this->audioQueue->push(*frame);
+        }
+        else if (frame->type == DIMENSION_FRAME){
+            int * dim = (int*) frame->data;
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, " DIM : width %d, height %d", dim[0], dim[1]);
+
         } else {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Unknow frame type %d", frame->type);
         }

@@ -21,3 +21,9 @@ Image::Image(int width, int height) {
 
 	this->uvPitch = this->width / 2;
 }
+
+Image::~Image() {
+delete [] this->yPlane;
+delete [] this->uPlane;
+delete [] this->vPlane;
+}

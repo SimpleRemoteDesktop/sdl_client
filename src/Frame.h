@@ -9,7 +9,7 @@
 #include <stdint-gcc.h>
 
 enum FRAME_TYPE {
-    VIDEO_FRAME = 1, AUDIO_FRAME = 2
+    VIDEO_FRAME = 1, AUDIO_FRAME = 2, DIMENSION_FRAME = 3
 };
 
 class Frame {

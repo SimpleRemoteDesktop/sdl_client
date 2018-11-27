@@ -20,7 +20,7 @@ void SRD_audio_decoder_init(int sampleRate, int channels) {
 
     decoder = opus_decoder_create(sampleRate, channels, &err);
     if (err < 0) {
-        fprintf(stderr, "failed to create decoder: %s\n", opus_strerror(err));
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "failed to create decoder: %s\n", opus_strerror(err));
         //FIXME
     }
 }
@@ -33,7 +33,7 @@ void SRD_audio_decode(unsigned char *audioFrame, int size) {
     int frame_size = opus_decode(decoder, (const unsigned char *) audioFrame, size, output_audio_raw, MAX_FRAME_SIZE,
                                  0);
     if (frame_size < 0) {
-        fprintf(stderr, "decoder failed: %s\n", opus_strerror(frame_size));
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "decoder failed: %s\n", opus_strerror(frame_size));
         //FIXME
     }
     unsigned int buffer_length = frame_size * 2 * sizeof(opus_int16); //FIXME  channels numbers

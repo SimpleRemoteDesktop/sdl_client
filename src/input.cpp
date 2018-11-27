@@ -24,7 +24,7 @@ void InputHandler::run() {
                     break;
 
                 case SDL_KEYDOWN:
-                    printf("pressed key %d\n", userEvent.key.keysym.sym);
+                    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "pressed key %d\n", userEvent.key.keysym.sym);
                     send.type = TYPE_KEY_DOWN;
                     if (userEvent.key.keysym.sym == 1073742048) {
                         ctrl_press = true;
@@ -47,7 +47,7 @@ void InputHandler::run() {
                     break;
 
                 case SDL_KEYUP:
-                    printf("released key %d\n", userEvent.key.keysym.sym);
+                    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "released key %d\n", userEvent.key.keysym.sym);
                     send.type = TYPE_KEY_UP;
                     if (userEvent.key.keysym.sym == 1073742048) {
                         ctrl_press = false;
@@ -62,7 +62,7 @@ void InputHandler::run() {
                     break;
 
                 case SDL_MOUSEMOTION:
-                    //printf("mouse position x: %d, y: %d \n", userEvent.motion.x, userEvent.motion.y);
+                    SDL_LogDebug(SDL_LOG_PRIORITY_VERBOSE, "mouse position x: %d, y: %d \n", userEvent.motion.x, userEvent.motion.y);
                     send.type = TYPE_MOUSE_MOTION;
                     int w, h;
                     this->appManager->getScreenSize(&w, &h);
@@ -75,7 +75,7 @@ void InputHandler::run() {
                     send.type = TYPE_MOUSE_DOWN;
                     switch (userEvent.button.button) {
                         case SDL_BUTTON_LEFT: {
-                            //printf("left click down\n");
+                            SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "left click down\n");
                             send.button = 1;
                             network->send(&send);
                             break;
