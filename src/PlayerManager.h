@@ -18,7 +18,7 @@ class PlayerManager {
 
 public:
     void fullScreenHandler();
-    PlayerManager(std::string hostname, int port, int codecWidth, int codecHeight, int bandwidth, int fps);
+    PlayerManager(std::string hostname, int port, int codecWidth, int codecHeight, int bandwidth, int fps, bool withRelativeMouse);
     ~PlayerManager();
     void getScreenSize(int *pInt, int *pInt1);
     void start();

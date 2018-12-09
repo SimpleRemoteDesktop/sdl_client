@@ -26,7 +26,7 @@ int input_thread_fn(void *data) {
 }
 
 
-PlayerManager::PlayerManager(std::string hostname, int port, int codecWidth, int codecHeight, int bandwidth, int fps) {
+PlayerManager::PlayerManager(std::string hostname, int port, int codecWidth, int codecHeight, int bandwidth, int fps, bool withRelativeMouse) {
     this->hostname = hostname;
     this->port = port;
     this->codecWidth = codecWidth;
@@ -54,9 +54,12 @@ PlayerManager::PlayerManager(std::string hostname, int port, int codecWidth, int
     this->videoMgr = new VideoManager(this->videoQueue, this->codecWidth, this->codecHeight, this->screen);
 
     this->audioMgr = new AudioManager(this->audioQueue, 48000, 2);
+    if(withRelativeMouse) {
+      SDL_CaptureMouse(SDL_TRUE);
+      SDL_ShowCursor(SDL_DISABLE);
+    }
 
-
-    this->input = new InputHandler(this->network, this);
+    this->input = new InputHandler(this->network, this, withRelativeMouse);
 }
 
 PlayerManager::~PlayerManager() {

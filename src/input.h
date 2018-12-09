@@ -12,7 +12,7 @@
 
 class InputHandler {
 public:
-    InputHandler(Network *network, PlayerManager* playerManager);
+    InputHandler(Network *network, PlayerManager* playerManager, bool withRelativeMouse);
     void run();
 private:
     Network *network;
@@ -20,6 +20,7 @@ private:
     bool alt_press = false;
     PlayerManager *appManager;
     bool isRunning;
+    bool withRelativeMouse = false;
 };
 
 #endif
