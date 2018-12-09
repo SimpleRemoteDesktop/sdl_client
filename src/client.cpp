@@ -38,6 +38,7 @@ int main(int argc, char **argv) {
     int height = 600;
     int bandwidth = 1000000;
     int fps = 24;
+    bool withRelativeMouse = true;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "init() \n");
 
@@ -98,7 +99,7 @@ int main(int argc, char **argv) {
                 bandwidth,
                 fps);*/
 
-    PlayerManager *player = new PlayerManager(hostname, port, width, height, bandwidth, fps);
+    PlayerManager *player = new PlayerManager(hostname, port, width, height, bandwidth, fps, withRelativeMouse);
     player->start();
 
     exit(1);

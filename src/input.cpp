@@ -4,9 +4,10 @@
 
 extern Network *network;
 
-InputHandler::InputHandler(Network *network, PlayerManager *appManager) {
+InputHandler::InputHandler(Network *network, PlayerManager *appManager, bool withRelativeMouse) {
     this->network = network;
     this->appManager = appManager;
+    this->withRelativeMouse = withRelativeMouse;
 
 }
 
@@ -63,12 +64,17 @@ void InputHandler::run() {
 
                 case SDL_MOUSEMOTION:
                     SDL_LogDebug(SDL_LOG_PRIORITY_VERBOSE, "mouse position x: %d, y: %d \n", userEvent.motion.x, userEvent.motion.y);
-                    send.type = TYPE_MOUSE_MOTION;
                     int w, h;
-                    this->appManager->getScreenSize(&w, &h);
-
-                    send.x = ((float) userEvent.motion.x / (float) w);
-                    send.y = ((float) userEvent.motion.y / (float) h);
+                    if(this->withRelativeMouse) {
+                        send.type = TYPE_MOUSE_RELATIVE_MOTION;
+                        send.x = (float) userEvent.motion.xrel;
+                        send.y = (float) userEvent.motion.yrel;                       
+                    } else {
+                        send.type = TYPE_MOUSE_MOTION;
+                        this->appManager->getScreenSize(&w, &h);
+                        send.x = ((float) userEvent.motion.x / (float) w);
+                        send.y = ((float) userEvent.motion.y / (float) h);
+                    }
                     network->send(&send);
                     break;
                 case SDL_MOUSEBUTTONDOWN: {
