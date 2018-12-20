@@ -4,7 +4,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
 #include <SDL2/SDL_thread.h>
-#include "Image.h"
+#include "video_decoder.h"
+#include "network.h"
 
 
 //void init_video(int screen_width, int screen_height);
@@ -13,7 +14,7 @@
 class SdlVideoRenderer {
 public:
     SdlVideoRenderer(int rendererWidth, int rendererHeight, SDL_Window *screen);
-    void update_video_surface(Image* image);
+    void update_video_surface(AVFrame* image);
     void destroy_texture();
 
 private:

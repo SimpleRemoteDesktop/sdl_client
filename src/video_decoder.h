@@ -9,7 +9,6 @@
 #include<time.h>
 #include <stdio.h>
 #include "Frame.h"
-#include "Image.h"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -21,13 +20,12 @@ class SoftwareVideoDecoder {
 public:
     SoftwareVideoDecoder(int codecWidth, int codecHeight);
     ~SoftwareVideoDecoder();
-    void decode(Frame *frame, Image* image);
+    bool decode(Frame *frame, AVFrame* image);
     void run();
 
 private:
     int codecWidth;
     int codecHeight;
-    AVFrame *pFrame;
     AVCodecContext *pCodecCtx;
     SwsContext *sws_ctx;
 };

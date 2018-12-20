@@ -1,6 +1,4 @@
 #include "video_surface.h"
-#include "video_decoder.h"
-#include "network.h"
 
 
 void SdlVideoRenderer::destroy_texture() {
@@ -9,17 +7,17 @@ void SdlVideoRenderer::destroy_texture() {
     SDL_DestroyRenderer(renderer);
 }
 
-void SdlVideoRenderer::update_video_surface(Image * image) {
+void SdlVideoRenderer::update_video_surface(AVFrame * image) {
     if (bmp != NULL) {
         SDL_UpdateYUVTexture(
                 bmp,
                 NULL,
-                image->yPlane,
-                this->width,
-                image->uPlane,
-                image->uvPitch,
-                image->vPlane,
-                image->uvPitch
+                image->data[0],
+                image->linesize[0],
+                image->data[1],
+                image->linesize[1],
+                image->data[2],
+                image->linesize[2]
         );
 
         SDL_RenderClear(renderer);
@@ -35,7 +33,7 @@ SdlVideoRenderer::SdlVideoRenderer(int rendererWidth, int rendererHeight, SDL_Wi
     this->width = rendererWidth;
     this->height = rendererHeight;
     this->screen = screen;
-    this->renderer = SDL_CreateRenderer(screen, -1, 0);
+    this->renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL: could not create renderer - exiting\n");
         //FIXME

@@ -21,11 +21,12 @@ void VideoManager::run() {
     this->isRunning = true;
     while(this->isRunning) {
         Frame frame = this->videoQueue->pop();
-        Image *image = new Image(this->screenWidth, this->screenHeight);
-        this->decoder->decode(&frame, image);
-        this->surface->update_video_surface(image);
+        AVFrame *pFrame = av_frame_alloc();
+        if(this->decoder->decode(&frame, pFrame)) {
+            this->surface->update_video_surface(pFrame);
+        }
         delete [] frame.data;
-        delete image;
+        av_frame_free(&pFrame);
     }
 }
 
