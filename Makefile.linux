@@ -30,12 +30,12 @@ SDL2_net:
 	rm -Rf SDL2_net-2.0.1*
 
 ffmpeg:
-	wget http://ffmpeg.org/releases/ffmpeg-3.4.tar.bz2
-	tar -jxvf ffmpeg-3.4.tar.bz2
-	cd ffmpeg-3.4; ./configure --arch=x86 --enable-shared --prefix=$(shell pwd)/linux
-	make -C ffmpeg-3.4/ -j24
-	make -C ffmpeg-3.4/ install
-	rm -Rf ffmpeg-3.4*
+	wget http://ffmpeg.org/releases/ffmpeg-4.1.tar.bz2
+	tar -jxvf ffmpeg-4.1.tar.bz2
+	cd ffmpeg-4.1; ./configure --arch=x86 --enable-shared --prefix=$(shell pwd)/linux
+	make -C ffmpeg-4.1/ -j24
+	make -C ffmpeg-4.1/ install
+	rm -Rf ffmpeg-4.1*
 
 clean:
 	rm -Rf linux

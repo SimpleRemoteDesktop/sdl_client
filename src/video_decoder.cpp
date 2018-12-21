@@ -3,6 +3,7 @@
 #include "video_decoder.h"
 #include "video_surface.h"
 
+
 SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     this->codecWidth = codecWidth;
     this->codecHeight = codecHeight;
@@ -10,10 +11,9 @@ SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     AVCodec *pCodec = NULL;
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "starting with codec resolution %dx%d", codecWidth, codecHeight);
     av_register_all();
-    avformat_network_init(); //FIXME alway use ?
+    pCodec = avcodec_find_decoder(AV_CODEC_ID_H264);
 
     // Find the decoder for the video stream
-    pCodec = avcodec_find_decoder(AV_CODEC_ID_H264);
     if (pCodec == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unsupported codec!\n");
         //FIXME : thorw error
@@ -24,6 +24,16 @@ SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     pCodecCtx->width = codecWidth; //TODO set value
     pCodecCtx->height = codecHeight; // TODO set value
     pCodecCtx->pix_fmt = AV_PIX_FMT_YUV420P; // TODO must support multiple value
+    pCodecCtx->flags |= AV_CODEC_FLAG_LOW_DELAY;
+    pCodecCtx->flags |= AV_CODEC_FLAG_OUTPUT_CORRUPT;
+    pCodecCtx->flags |= AV_CODEC_FLAG2_SHOW_ALL;
+
+    if(true) { // SOftware decoder
+        pCodecCtx->thread_type = FF_THREAD_SLICE;
+        pCodecCtx->thread_count = SDL_min(4, SDL_GetCPUCount());
+    } else { //hardware decoder
+        pCodecCtx->thread_count = 1;
+    }
 
     // Open codec
     if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
@@ -68,3 +78,4 @@ bool SoftwareVideoDecoder::decode(Frame *frame, AVFrame *image) {
 SoftwareVideoDecoder::~SoftwareVideoDecoder() {
     avcodec_close(pCodecCtx);
 }
+
