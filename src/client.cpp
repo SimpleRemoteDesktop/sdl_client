@@ -18,90 +18,93 @@
 
 int main(int argc, char **argv) {
 
-    // Declare display mode structure to be filled in.
-    SDL_DisplayMode current;
+	// Declare display mode structure to be filled in.
+	SDL_DisplayMode current;
 
-    //sound driver only for windows
+	//sound driver only for windows
 
 #ifdef WIN32
-    putenv("SDL_AUDIODRIVER=DirectSound");
+	putenv("SDL_AUDIODRIVER=DirectSound");
 #endif
 
 
 
-    // set log level
+	// set log level
 
-    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
+	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 
-    // default value
-    int width = 800;
-    int height = 600;
-    int bandwidth = 1000000;
-    int fps = 24;
+	// default value
+	int width = 800;
+	int height = 600;
+	int bandwidth = 1000000;
+	int fps = 24;
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "init() \n");
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "init() \n");
 
-    char *video_definition = argv[3];
-
-
-    if (argv[4] != NULL && atoi(argv[4]) > 0) // have custom bandwidth
-    {
-        bandwidth = atoi(argv[4]);
-    }
-
-    if (argv[4] != NULL && atoi(argv[5]) > 0) //have custom fps
-    {
-        fps = atoi(argv[5]);
-    }
-
-    if (video_definition != NULL) {
-        if (strcmp("720p", video_definition) == 0) {
-            width = 1280;
-            height = 720;
-        } else if (strcmp("800p", video_definition) == 0) {
-            width = 1280;
-            height = 800;
-        } else if (strcmp("1080p", video_definition) == 0) {
-            width = 1920;
-            height = 1080;
-        }
-    }
-
-    std::string hostname(strdup(argv[1]));
-    int port = atoi(argv[2]);
+	char *video_definition = argv[3];
 
 
-    // start SDL Application
+	if (argv[4] != NULL && atoi(argv[4]) > 0) // have custom bandwidth
+	{
+		bandwidth = atoi(argv[4]);
+	}
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL - %s\n", SDL_GetError());
-        exit(1);
-    }
+	if (argv[4] != NULL && atoi(argv[5]) > 0) //have custom fps
+	{
+		fps = atoi(argv[5]);
+	}
 
-    int should_be_zero = SDL_GetCurrentDisplayMode(0, &current);
+	if (video_definition != NULL) {
+		if (strcmp("720p", video_definition) == 0) {
+			width = 1280;
+			height = 720;
+		} else if (strcmp("800p", video_definition) == 0) {
+			width = 1280;
+			height = 800;
+		} else if (strcmp("1080p", video_definition) == 0) {
+			width = 1920;
+			height = 1080;
+		} else if (strcmp("960p", video_definition) == 0) {
+			width = 1280;
+			height = 960;
+		}
+	}
 
-    if (should_be_zero != 0) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not get Current display resolution %s", SDL_GetError());
-    } else {
-//        width = current.w;
-//        height = current.h;
-        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "max screen resolution, width : %d, height: %d", width, height);
+	std::string hostname(strdup(argv[1]));
+	int port = atoi(argv[2]);
 
-    }
 
-   /* SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
-                "parameters hostname : %s, port : %d, video resolution : %sx%s, bandwidth : %d, fps : %d\n",
-                hostname.c_str(),
-                port,
-                width,
-                height,
-                bandwidth,
-                fps);*/
+	// start SDL Application
 
-    PlayerManager *player = new PlayerManager(hostname, port, width, height, bandwidth, fps);
-    player->start();
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL - %s\n", SDL_GetError());
+		exit(1);
+	}
 
-    exit(1);
+	int should_be_zero = SDL_GetCurrentDisplayMode(0, &current);
+
+	if (should_be_zero != 0) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not get Current display resolution %s", SDL_GetError());
+	} else {
+		//        width = current.w;
+		//        height = current.h;
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "max screen resolution, width : %d, height: %d", width, height);
+
+	}
+
+	/* SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+	   "parameters hostname : %s, port : %d, video resolution : %sx%s, bandwidth : %d, fps : %d\n",
+	   hostname.c_str(),
+	   port,
+	   width,
+	   height,
+	   bandwidth,
+	   fps);*/
+
+	PlayerManager *player = new PlayerManager(hostname, port, width, height, bandwidth, fps);
+	player->start();
+
+	exit(1);
 }
 
 
