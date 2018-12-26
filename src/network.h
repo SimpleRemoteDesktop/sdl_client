@@ -23,7 +23,9 @@ enum type {
     TYPE_MOUSE_DOWN = 4,
     TYPE_MOUSE_UP = 5,
     TYPE_ENCODER_START = 6,
-    TYPE_ENCODER_STOP = 7
+    TYPE_ENCODER_STOP = 7,
+    TYPE_MOUSE_RELATIVE_MOTION = 8
+
 };
 
 struct Message {

@@ -33,11 +33,12 @@ int main(int argc, char **argv) {
 
 	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 
-	// default value
-	int width = 800;
-	int height = 600;
-	int bandwidth = 1000000;
-	int fps = 24;
+    // default value
+    int width = 800;
+    int height = 600;
+    int bandwidth = 1000000;
+    int fps = 24;
+    bool withRelativeMouse = false;
 
 	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "init() \n");
 
@@ -54,21 +55,22 @@ int main(int argc, char **argv) {
 		fps = atoi(argv[5]);
 	}
 
-	if (video_definition != NULL) {
-		if (strcmp("720p", video_definition) == 0) {
-			width = 1280;
-			height = 720;
-		} else if (strcmp("800p", video_definition) == 0) {
-			width = 1280;
-			height = 800;
-		} else if (strcmp("1080p", video_definition) == 0) {
-			width = 1920;
-			height = 1080;
-		} else if (strcmp("960p", video_definition) == 0) {
-			width = 1280;
-			height = 960;
-		}
-	}
+    if(argv[6] != NULL && strcmp("+relative", argv[6]) == 0) { //relative mouse mode / else absolute
+        withRelativeMouse = true;
+    }
+
+    if (video_definition != NULL) {
+        if (strcmp("720p", video_definition) == 0) {
+            width = 1280;
+            height = 720;
+        } else if (strcmp("800p", video_definition) == 0) {
+            width = 1280;
+            height = 800;
+        } else if (strcmp("1080p", video_definition) == 0) {
+            width = 1920;
+            height = 1080;
+        }
+    }
 
 	std::string hostname(strdup(argv[1]));
 	int port = atoi(argv[2]);
@@ -101,8 +103,8 @@ int main(int argc, char **argv) {
 	   bandwidth,
 	   fps);*/
 
-	PlayerManager *player = new PlayerManager(hostname, port, width, height, bandwidth, fps);
-	player->start();
+    PlayerManager *player = new PlayerManager(hostname, port, width, height, bandwidth, fps, withRelativeMouse);
+    player->start();
 
 	exit(1);
 }
