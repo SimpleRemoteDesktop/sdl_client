@@ -4,9 +4,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
 #include <SDL2/SDL_thread.h>
+#include <X11/X.h>
 #include "video_decoder.h"
 #include "network.h"
-
+#include <SDL2/SDL_syswm.h>
 
 //void init_video(int screen_width, int screen_height);
 //void SRD_UpdateScreenResolution();
@@ -16,6 +17,7 @@ public:
     SdlVideoRenderer(int rendererWidth, int rendererHeight, SDL_Window *screen);
     void update_video_surface(AVFrame* image);
     void destroy_texture();
+    Window getX11Window();
 
 private:
     SDL_Renderer *renderer;

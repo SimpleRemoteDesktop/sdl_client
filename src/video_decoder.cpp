@@ -1,7 +1,10 @@
-#include <SDL2/SDL_net.h>
-
 #include "video_decoder.h"
 #include "video_surface.h"
+#define HAVE_VAAPI
+
+#ifdef HAVE_VAAPI
+#include "vaapi/vaapi.h"
+#endif
 
 
 SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
@@ -28,7 +31,7 @@ SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     pCodecCtx->flags |= AV_CODEC_FLAG_OUTPUT_CORRUPT;
     pCodecCtx->flags |= AV_CODEC_FLAG2_SHOW_ALL;
 
-    if(true) { // SOftware decoder
+    if (true) { // SOftware decoder
         pCodecCtx->thread_type = FF_THREAD_SLICE;
         pCodecCtx->thread_count = SDL_min(4, SDL_GetCPUCount());
     } else { //hardware decoder
@@ -39,6 +42,14 @@ SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
         // FIXME throw error
     }
+#ifdef HAVE_VAAPI
+    if(vaapi_init_lib() != 0) { //FIXME should be change
+        printf("err while opening VAAPI decoder\n");
+    } else {
+        vaapi_init(pCodecCtx);
+        printf(" VAAPI decoder opened\n");
+    };
+#endif
 }
 
 bool SoftwareVideoDecoder::decode(Frame *frame, AVFrame *image) {
@@ -53,13 +64,13 @@ bool SoftwareVideoDecoder::decode(Frame *frame, AVFrame *image) {
 
     while (packet.size > 0) {
 
-        int lenght;
+        int length;
         // Decode video frame
         int frameFinished;
-        lenght = avcodec_decode_video2(pCodecCtx, image, &frameFinished, &packet);
+        length = avcodec_decode_video2(pCodecCtx, image, &frameFinished, &packet); //FIXME deprecated
 
 
-        if (lenght < 0) {
+        if (length < 0) {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error while decoding frame\n");
         }
         // Did we get a video frame?
@@ -67,8 +78,8 @@ bool SoftwareVideoDecoder::decode(Frame *frame, AVFrame *image) {
             return true;
         }
         if (packet.data) {
-            packet.size -= lenght;
-            packet.data += lenght;
+            packet.size -= length;
+            packet.data += length;
         }
         av_free_packet(&packet);
         return false;
