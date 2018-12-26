@@ -22,7 +22,7 @@ public:
     ~SoftwareVideoDecoder();
     bool decode(Frame *frame, AVFrame* image);
     void run();
-
+    bool isVaapi = false;
 private:
     int codecWidth;
     int codecHeight;

@@ -53,6 +53,7 @@ SdlVideoRenderer::SdlVideoRenderer(int rendererWidth, int rendererHeight, SDL_Wi
 
 Window SdlVideoRenderer::getX11Window() {
     SDL_SysWMinfo info;
+    SDL_VERSION(&info.version);
     if (!SDL_GetWindowWMInfo(this->screen, &info)) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                      "SDL_GetWindowWMInfo() failed: %s",

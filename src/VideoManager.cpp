@@ -3,9 +3,10 @@
 //
 
 #include "VideoManager.h"
+#include "vaapi/vaapi.h"
 
 
-VideoManager::VideoManager(Queue<Frame> *videoQueue, int screenWidth, int screenHeight, SDL_Window* screen) {
+VideoManager::VideoManager(Queue<Frame> *videoQueue, int screenWidth, int screenHeight, SDL_Window *screen) {
     this->screenWidth = screenWidth;
     this->screenHeight = screenHeight;
     this->videoQueue = videoQueue;
@@ -19,15 +20,19 @@ VideoManager::VideoManager(Queue<Frame> *videoQueue, int screenWidth, int screen
 
 void VideoManager::run() {
     this->isRunning = true;
-    while(this->isRunning) {
+    while (this->isRunning) {
         Frame frame = this->videoQueue->pop();
         int time = SDL_GetTicks();
         AVFrame *pFrame = av_frame_alloc();
-        if(this->decoder->decode(&frame, pFrame)) {
-            this->surface->update_video_surface(pFrame);
+        if (this->decoder->decode(&frame, pFrame)) {
+            if (this->decoder->isVaapi) {
+                vaapi_queue(pFrame, this->surface->getX11Window(), this->screenWidth, this->screenHeight);
+            } else {
+                this->surface->update_video_surface(pFrame);
+            }
         }
         printf("Decode deisplay time %d \n", SDL_GetTicks() - time);
-        delete [] frame.data;
+        delete[] frame.data;
         av_frame_free(&pFrame);
     }
 }
