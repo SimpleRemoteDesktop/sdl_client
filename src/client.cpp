@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     int height = 600;
     int bandwidth = 1000000;
     int fps = 24;
-    bool withRelativeMouse = true;
+    bool withRelativeMouse = false;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "init() \n");
 
@@ -53,6 +53,10 @@ int main(int argc, char **argv) {
     if (argv[4] != NULL && atoi(argv[5]) > 0) //have custom fps
     {
         fps = atoi(argv[5]);
+    }
+
+    if(argv[6] != NULL && strcmp("+relative", argv[6]) == 0) { //relative mouse mode / else absolute
+        withRelativeMouse = true;
     }
 
     if (video_definition != NULL) {
