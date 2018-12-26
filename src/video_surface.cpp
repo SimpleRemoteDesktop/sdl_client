@@ -51,6 +51,13 @@ SdlVideoRenderer::SdlVideoRenderer(int rendererWidth, int rendererHeight, SDL_Wi
     );
 }
 
+SDL_Rect SdlVideoRenderer::getSize() {
+    SDL_Rect size;
+    size.x = size.y = 0;
+    SDL_GetWindowSize(this->screen, &size.w, &size.h);
+    return size;
+}
+
 Window SdlVideoRenderer::getX11Window() {
     SDL_SysWMinfo info;
     SDL_VERSION(&info.version);

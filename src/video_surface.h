@@ -18,6 +18,7 @@ public:
     void update_video_surface(AVFrame* image);
     void destroy_texture();
     Window getX11Window();
+    SDL_Rect getSize();
 
 private:
     SDL_Renderer *renderer;

@@ -20,6 +20,7 @@ public:
     void run();
 
 private:
+    void scaleSourceToDestinationSurface(SDL_Rect* src, SDL_Rect* dst);
     Queue<Frame> *videoQueue;
     SdlVideoRenderer *surface;
     int screenWidth;
