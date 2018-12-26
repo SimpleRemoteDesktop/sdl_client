@@ -1,3 +1,4 @@
+#include <va/va_x11.h>
 #include "video_surface.h"
 
 
@@ -48,4 +49,14 @@ SdlVideoRenderer::SdlVideoRenderer(int rendererWidth, int rendererHeight, SDL_Wi
             this->width,
             this->height
     );
+}
+
+Window SdlVideoRenderer::getX11Window() {
+    SDL_SysWMinfo info;
+    if (!SDL_GetWindowWMInfo(this->screen, &info)) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                     "SDL_GetWindowWMInfo() failed: %s",
+                     SDL_GetError());
+    }
+    return info.info.x11.window;
 }
