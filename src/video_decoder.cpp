@@ -48,6 +48,7 @@ SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     } else {
         vaapi_init(pCodecCtx);
         printf(" VAAPI decoder opened\n");
+        this->isVaapi = true;
     };
 #endif
 }
