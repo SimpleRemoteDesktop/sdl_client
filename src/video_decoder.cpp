@@ -1,15 +1,19 @@
 #include "video_decoder.h"
 #include "video_surface.h"
+
 #define HAVE_VAAPI
 
 #ifdef HAVE_VAAPI
+
 #include "vaapi/vaapi.h"
+
 #endif
 
 
 SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     this->codecWidth = codecWidth;
     this->codecHeight = codecHeight;
+    this->isHardwareDecoder = false;
 
     AVCodec *pCodec = NULL;
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "starting with codec resolution %dx%d", codecWidth, codecHeight);
@@ -30,27 +34,32 @@ SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     pCodecCtx->flags |= AV_CODEC_FLAG_LOW_DELAY;
     pCodecCtx->flags |= AV_CODEC_FLAG_OUTPUT_CORRUPT;
     pCodecCtx->flags |= AV_CODEC_FLAG2_SHOW_ALL;
+    pCodecCtx->skip_loop_filter = AVDISCARD_ALL;
 
-    if (true) { // SOftware decoder
-        pCodecCtx->thread_type = FF_THREAD_SLICE;
-        pCodecCtx->thread_count = SDL_min(4, SDL_GetCPUCount());
-    } else { //hardware decoder
-        pCodecCtx->thread_count = 1;
-    }
-
-    // Open codec
-    if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
-        // FIXME throw error
-    }
 #ifdef HAVE_VAAPI
-    if(vaapi_init_lib() != 0) { //FIXME should be change
+    if (vaapi_init_lib() != 0) { //FIXME should be change
         printf("err while opening VAAPI decoder\n");
     } else {
         vaapi_init(pCodecCtx);
         printf(" VAAPI decoder opened\n");
         this->isVaapi = true;
+        this->isHardwareDecoder = true;
     };
 #endif
+
+    if (this->isHardwareDecoder) { //hardware decoder
+        pCodecCtx->thread_count = 1;
+
+    } else {  // SOftware decoder
+        pCodecCtx->thread_type = FF_THREAD_SLICE;
+        pCodecCtx->thread_count = SDL_min(4, SDL_GetCPUCount());
+
+    }
+    // Open codec
+    if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
+        // FIXME throw error
+    }
+
 }
 
 bool SoftwareVideoDecoder::decode(Frame *frame, AVFrame *image) {
