@@ -69,7 +69,10 @@ int main(int argc, char **argv) {
         } else if (strcmp("1080p", video_definition) == 0) {
             width = 1920;
             height = 1080;
-        }
+        } else if (strcmp("960p", video_definition) == 0) {
+            width = 1280;
+            height = 960;
+        } 
     }
 
 	std::string hostname(strdup(argv[1]));

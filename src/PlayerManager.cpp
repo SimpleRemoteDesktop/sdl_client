@@ -55,8 +55,7 @@ PlayerManager::PlayerManager(std::string hostname, int port, int codecWidth, int
 
     this->audioMgr = new AudioManager(this->audioQueue, 48000, 2);
     if(withRelativeMouse) {
-      SDL_CaptureMouse(SDL_TRUE);
-      SDL_ShowCursor(SDL_DISABLE);
+      SDL_SetRelativeMouseMode(SDL_TRUE);
     }
 
     this->input = new InputHandler(this->network, this, withRelativeMouse);

@@ -28,7 +28,7 @@ private:
     int codecHeight;
     AVCodecContext *pCodecCtx;
     SwsContext *sws_ctx;
-    bool isHardwareDecoder false;
+    bool isHardwareDecoder = false;
 };
 
 #endif

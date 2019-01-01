@@ -48,11 +48,15 @@ SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
 #endif
 
     if (this->isHardwareDecoder) { //hardware decoder
-        pCodecCtx->thread_count = 1;
+        pCodecCtx->thread_count = 2;
+        printf("hw accel :creating 1 thread \n");
 
     } else {  // SOftware decoder
         pCodecCtx->thread_type = FF_THREAD_SLICE;
-        pCodecCtx->thread_count = SDL_min(4, SDL_GetCPUCount());
+        int nprocs = SDL_min(4, SDL_GetCPUCount());
+        pCodecCtx->thread_count = nprocs;
+        printf("software decode nbproces : %d \n", nprocs);
+
 
     }
     // Open codec
