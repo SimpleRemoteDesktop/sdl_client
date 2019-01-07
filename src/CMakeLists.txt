@@ -2,6 +2,11 @@ file(GLOB SRC
 	*.cpp
 	*.c)
 
+if(WITH_CRYSTALHD)
+  add_subdirectory(crystalhd)
+  list(APPEND SRD HAVE_CRYSTAL_HD)
+endif()
+
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBVA libva)
 pkg_check_modules(LIBVA_X11 libva-x11)
