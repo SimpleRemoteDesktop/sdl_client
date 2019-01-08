@@ -6,6 +6,8 @@
 #ifdef HAVE_VAAPI
 
 #include "vaapi/vaapi.h"
+#include "crystalhd/crystalhd.h"
+#include <libavutil/hwcontext.h>
 
 #endif
 
@@ -14,6 +16,7 @@ SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     this->codecWidth = codecWidth;
     this->codecHeight = codecHeight;
     this->isHardwareDecoder = false;
+
 
     AVCodec *pCodec = NULL;
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "starting with codec resolution %dx%d", codecWidth, codecHeight);
@@ -36,15 +39,24 @@ SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     pCodecCtx->flags |= AV_CODEC_FLAG2_SHOW_ALL;
     pCodecCtx->skip_loop_filter = AVDISCARD_ALL;
 
+#ifdef HAVE_CRYSTAL_HD
+    crystalhd_init(pCodecCtx);
+    this->isCrystalHd = true;
+    this->isHardwareDecoder = true;
+    printf("crystalhd decoder init");
+#endif
+
 #ifdef HAVE_VAAPI
-    if (vaapi_init_lib() != 0) { //FIXME should be change
-        printf("err while opening VAAPI decoder\n");
-    } else {
-        vaapi_init(pCodecCtx);
-        printf(" VAAPI decoder opened\n");
-        this->isVaapi = true;
-        this->isHardwareDecoder = true;
-    };
+    if(!this->isCrystalHd) {
+        if (vaapi_init_lib() != 0) { //FIXME should be change
+            printf("err while opening VAAPI decoder\n");
+        } else {
+            vaapi_init(pCodecCtx);
+            printf(" VAAPI decoder opened\n");
+            this->isVaapi = true;
+            this->isHardwareDecoder = true;
+        }
+    }
 #endif
 
     if (this->isHardwareDecoder) { //hardware decoder

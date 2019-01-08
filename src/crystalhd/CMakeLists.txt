@@ -2,4 +2,4 @@ file(GLOB SRC
 	*.cpp
 	*.c)
 
-add_library(crystalHdDecoder ${SRC})
+add_library(crystalhd ${SRC})

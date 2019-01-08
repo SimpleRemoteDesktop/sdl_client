@@ -29,6 +29,7 @@ private:
     AVCodecContext *pCodecCtx;
     SwsContext *sws_ctx;
     bool isHardwareDecoder = false;
+    bool isCrystalHd = false;
 };
 
 #endif
