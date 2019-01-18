@@ -2,6 +2,8 @@
 #include "network.h"
 #include "video_surface.h"
 
+#define MOUSE_POLLING_INTERVAL 5
+
 extern Network *network;
 
 InputHandler::InputHandler(Network *network, PlayerManager *appManager, bool withRelativeMouse) {
@@ -9,10 +11,12 @@ InputHandler::InputHandler(Network *network, PlayerManager *appManager, bool wit
     this->appManager = appManager;
     this->withRelativeMouse = withRelativeMouse;
 
+
 }
 
 void InputHandler::run() {
     this->isRunning = true;
+    m_MouseMoveTimer = SDL_AddTimer(MOUSE_POLLING_INTERVAL, InputHandler::mouseMoveTimerCallback, this);
     while (this->isRunning) {
         SDL_Event userEvent;
         if (SDL_WaitEvent(&userEvent)) {
@@ -67,15 +71,14 @@ void InputHandler::run() {
                     int w, h;
                     this->appManager->getScreenSize(&w, &h);
                     if(this->withRelativeMouse) {
-                        send.type = TYPE_MOUSE_RELATIVE_MOTION;
-                        send.x = ((float) userEvent.motion.xrel / (float) w);
-                        send.y = ((float) userEvent.motion.yrel / (float) h);
+                        SDL_AtomicAdd(&mouseMotionType, TYPE_MOUSE_RELATIVE_MOTION);
+                        SDL_AtomicAdd(&mouseDeltaX, (float) userEvent.motion.xrel / (float) w);
+                        SDL_AtomicAdd (&mouseDeltaY, (float) userEvent.motion.yrel / (float) h);
                     } else {
-                        send.type = TYPE_MOUSE_MOTION;
-                        send.x = ((float) userEvent.motion.x / (float) w);
-                        send.y = ((float) userEvent.motion.y / (float) h);
+                        SDL_AtomicAdd(&mouseMotionType, TYPE_MOUSE_MOTION);
+                        SDL_AtomicAdd(&mouseDeltaX, (float) userEvent.motion.x / (float) w);
+                        SDL_AtomicAdd(&mouseDeltaY, (float) userEvent.motion.y / (float) h);
                     }
-                    network->send(&send);
                     break;
                 case SDL_MOUSEBUTTONDOWN: {
                     send.type = TYPE_MOUSE_DOWN;
@@ -131,4 +134,18 @@ void InputHandler::run() {
             }
         }
     }
+}
+
+Uint32 InputHandler::mouseMoveTimerCallback(Uint32 interval, void *param) {
+    auto me = reinterpret_cast<InputHandler*>(param);
+    struct Message send;
+    send.type = SDL_AtomicSet(&me->mouseMotionType, 0);
+    send.x = (float)SDL_AtomicSet(&me->mouseDeltaX, 0);
+    send.y = (float)SDL_AtomicSet(&me->mouseDeltaY, 0);
+
+    if (send.type != 0 && send.x != 0 || send.y != 0) {
+        me->network->send(&send);
+    }
+
+    return interval;
 }

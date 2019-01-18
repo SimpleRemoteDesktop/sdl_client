@@ -13,6 +13,7 @@
 class InputHandler {
 public:
     InputHandler(Network *network, PlayerManager* playerManager, bool withRelativeMouse);
+    Uint32 mouseMoveTimerCallback(Uint32 interval, void *param);
     void run();
 private:
     Network *network;
@@ -21,6 +22,10 @@ private:
     PlayerManager *appManager;
     bool isRunning;
     bool withRelativeMouse = false;
+    SDL_atomic_t mouseMotionType;
+    SDL_atomic_t mouseDeltaX;
+    SDL_atomic_t mouseDeltaY;
+
 };
 
 #endif
