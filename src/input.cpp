@@ -5,21 +5,30 @@
 #define MOUSE_POLLING_INTERVAL 5
 
 extern Network *network;
+SDL_atomic_t mouseRelativeMotionX;
+SDL_atomic_t mouseRelativeMotionY;
+SDL_atomic_t mouseAbsMotionX;
+SDL_atomic_t mouseAbsMotionY;
+
+
 
 InputHandler::InputHandler(Network *network, PlayerManager *appManager, bool withRelativeMouse) {
     this->network = network;
     this->appManager = appManager;
     this->withRelativeMouse = withRelativeMouse;
-
+    SDL_AtomicSet(&mouseRelativeMotionX, 0);
+    SDL_AtomicSet(&mouseRelativeMotionY, 0);
+    SDL_AtomicSet(&mouseAbsMotionX, 0);
+    SDL_AtomicSet(&mouseAbsMotionY, 0);
 
 }
 
 void InputHandler::run() {
     this->isRunning = true;
-    m_MouseMoveTimer = SDL_AddTimer(MOUSE_POLLING_INTERVAL, InputHandler::mouseMoveTimerCallback, this);
+    SDL_AddTimer(MOUSE_POLLING_INTERVAL, InputHandler::mouseMoveTimerCallback, this);
     while (this->isRunning) {
         SDL_Event userEvent;
-        if (SDL_WaitEvent(&userEvent)) {
+        while (SDL_WaitEvent(&userEvent)) {
             SDL_Delay(10);
             struct Message send;
 
@@ -68,16 +77,12 @@ void InputHandler::run() {
 
                 case SDL_MOUSEMOTION:
                     SDL_LogDebug(SDL_LOG_PRIORITY_VERBOSE, "mouse position x: %d, y: %d \n", userEvent.motion.x, userEvent.motion.y);
-                    int w, h;
-                    this->appManager->getScreenSize(&w, &h);
-                    if(this->withRelativeMouse) {
-                        SDL_AtomicAdd(&mouseMotionType, TYPE_MOUSE_RELATIVE_MOTION);
-                        SDL_AtomicAdd(&mouseDeltaX, (float) userEvent.motion.xrel / (float) w);
-                        SDL_AtomicAdd (&mouseDeltaY, (float) userEvent.motion.yrel / (float) h);
+                                       if(this->withRelativeMouse) {
+                        SDL_AtomicSet(&mouseRelativeMotionX, (int) SDL_AtomicGet(&mouseRelativeMotionX) + userEvent.motion.xrel);
+                        SDL_AtomicSet(&mouseRelativeMotionY, (int)  SDL_AtomicGet(&mouseRelativeMotionY) + userEvent.motion.yrel);
                     } else {
-                        SDL_AtomicAdd(&mouseMotionType, TYPE_MOUSE_MOTION);
-                        SDL_AtomicAdd(&mouseDeltaX, (float) userEvent.motion.x / (float) w);
-                        SDL_AtomicAdd(&mouseDeltaY, (float) userEvent.motion.y / (float) h);
+                        SDL_AtomicSet(&mouseAbsMotionX, userEvent.motion.x);
+                        SDL_AtomicSet(&mouseAbsMotionY, userEvent.motion.y);
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN: {
@@ -90,13 +95,11 @@ void InputHandler::run() {
                             break;
                         }
                         case SDL_BUTTON_RIGHT: {
-                            //printf("right click down\n");
                             send.button = 2;
                             network->send(&send);
                             break;
                         }
                         case SDL_BUTTON_MIDDLE: {
-                            //printf("middle click down\n");
                             send.button = 3;
                             network->send(&send);
                             break;
@@ -110,19 +113,16 @@ void InputHandler::run() {
                     send.type = TYPE_MOUSE_UP;
                     switch (userEvent.button.button) {
                         case SDL_BUTTON_LEFT: {
-                            //printf("left click released\n");
                             send.button = 1;
                             network->send(&send);
                             break;
                         }
                         case SDL_BUTTON_RIGHT: {
-                            //printf("right click released\n");
                             send.button = 2;
                             network->send(&send);
                             break;
                         }
                         case SDL_BUTTON_MIDDLE: {
-                            //printf("middle click released\n");
                             send.button = 3;
                             network->send(&send);
                             break;
@@ -138,14 +138,22 @@ void InputHandler::run() {
 
 Uint32 InputHandler::mouseMoveTimerCallback(Uint32 interval, void *param) {
     auto me = reinterpret_cast<InputHandler*>(param);
+    int w, h;
+    me->appManager->getScreenSize(&w, &h);
     struct Message send;
-    send.type = SDL_AtomicSet(&me->mouseMotionType, 0);
-    send.x = (float)SDL_AtomicSet(&me->mouseDeltaX, 0);
-    send.y = (float)SDL_AtomicSet(&me->mouseDeltaY, 0);
-
-    if (send.type != 0 && send.x != 0 || send.y != 0) {
-        me->network->send(&send);
+    if(me->withRelativeMouse) {
+	send.type = TYPE_MOUSE_RELATIVE_MOTION;
+	send.x = (float) SDL_AtomicGet(&mouseRelativeMotionX) / (float) w;
+	send.y = (float) SDL_AtomicGet(&mouseRelativeMotionY) / (float) h;
+	SDL_AtomicSet(&mouseRelativeMotionX, 0);
+	SDL_AtomicSet(&mouseRelativeMotionY, 0);
+    } else {
+	send.type = TYPE_MOUSE_MOTION;
+	send.x = (float) SDL_AtomicGet(&mouseAbsMotionX) / (float) w;
+	send.y = (float) SDL_AtomicGet(&mouseAbsMotionY) / (float) h;
     }
+
+        me->network->send(&send);
 
     return interval;
 }

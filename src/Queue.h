@@ -37,7 +37,6 @@ public:
         T rc(std::move(this->d_queue.back()));
         this->d_queue.pop_back(); //TODO destroy frame ?
         SDL_UnlockMutex(this->d_mutex);
-	printf("waiting frame %d \n", this->d_queue.size());
         return rc;
     }
 
