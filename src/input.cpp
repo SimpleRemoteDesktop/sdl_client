@@ -29,7 +29,6 @@ void InputHandler::run() {
     while (this->isRunning) {
         SDL_Event userEvent;
         while (SDL_WaitEvent(&userEvent)) {
-            SDL_Delay(10);
             struct Message send;
 
             switch (userEvent.type) {
@@ -76,7 +75,7 @@ void InputHandler::run() {
                     break;
 
                 case SDL_MOUSEMOTION:
-                    SDL_LogDebug(SDL_LOG_PRIORITY_VERBOSE, "mouse position x: %d, y: %d \n", userEvent.motion.x, userEvent.motion.y);
+                     SDL_LogDebug(SDL_LOG_PRIORITY_VERBOSE, "mouse position x: %d, y: %d \n", userEvent.motion.x, userEvent.motion.y);
                                        if(this->withRelativeMouse) {
                         SDL_AtomicSet(&mouseRelativeMotionX, (int) SDL_AtomicGet(&mouseRelativeMotionX) + userEvent.motion.xrel);
                         SDL_AtomicSet(&mouseRelativeMotionY, (int)  SDL_AtomicGet(&mouseRelativeMotionY) + userEvent.motion.yrel);
@@ -143,8 +142,8 @@ Uint32 InputHandler::mouseMoveTimerCallback(Uint32 interval, void *param) {
     struct Message send;
     if(me->withRelativeMouse) {
 	send.type = TYPE_MOUSE_RELATIVE_MOTION;
-	send.x = (float) SDL_AtomicGet(&mouseRelativeMotionX) / (float) w;
-	send.y = (float) SDL_AtomicGet(&mouseRelativeMotionY) / (float) h;
+	send.x = (float) SDL_AtomicGet(&mouseRelativeMotionX);
+	send.y = (float) SDL_AtomicGet(&mouseRelativeMotionY);
 	SDL_AtomicSet(&mouseRelativeMotionX, 0);
 	SDL_AtomicSet(&mouseRelativeMotionY, 0);
     } else {
