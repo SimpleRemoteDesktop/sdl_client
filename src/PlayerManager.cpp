@@ -66,15 +66,20 @@ PlayerManager::~PlayerManager() {
 }
 
 void PlayerManager::fullScreenHandler() {
-    if (this->fullscreen) {
-        this->fullscreen = false;
-        SDL_SetWindowFullscreen(screen, 0);
-    } else {
-
-        this->fullscreen = true;
-        SDL_SetWindowFullscreen(screen, SDL_WINDOW_FULLSCREEN_DESKTOP);
-    }
-
+	switch(this->screenDimension) {
+		case SRD_WINDOW:
+			SDL_SetWindowFullscreen(screen, SDL_WINDOW_FULLSCREEN_DESKTOP);
+			this->screenDimension = SRD_FULLSCREEN_WINDOW;
+			break;
+		case SRD_FULLSCREEN:
+			SDL_SetWindowFullscreen(screen, SDL_WINDOW_FULLSCREEN_DESKTOP);
+			this->screenDimension = SRD_FULLSCREEN_WINDOW;
+			break;
+		case SRD_FULLSCREEN_WINDOW:
+			SDL_SetWindowFullscreen(screen, 0);
+			this->screenDimension = SRD_WINDOW;
+			break;
+	}
 }
 
 void PlayerManager::getScreenSize(int *w, int *h) {

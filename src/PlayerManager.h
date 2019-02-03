@@ -13,6 +13,8 @@
 #include "AudioManager.h"
 
 class InputHandler;
+    
+enum screen_dimension { SRD_WINDOW, SRD_FULLSCREEN, SRD_FULLSCREEN_WINDOW };
 
 class PlayerManager {
 
@@ -25,7 +27,7 @@ public:
     void quit();
 
 private:
-    bool fullscreen = false;
+    enum screen_dimension screenDimension = SRD_WINDOW;
     SDL_Window *screen;
     std::string hostname;
     int port;
