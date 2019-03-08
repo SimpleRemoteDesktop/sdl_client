@@ -12,6 +12,7 @@ sudo apt-get install build-essential libavutil-dev libavcodec-dev libswscale-dev
 windows : 
 ```bash
 sudo apt-get install mingw-w64
+cmake -DCMAKE_TOOLCHAIN_FILE=WindowsToolChain.cmake .
 ```
 
 ## build for windows
