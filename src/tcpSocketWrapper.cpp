@@ -1,3 +1,4 @@
+#include <cstdio>
 # include "tcpSocketWrapper.h"
 
 static SOCKET sock;
