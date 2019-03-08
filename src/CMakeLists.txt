@@ -10,7 +10,7 @@ add_executable (client ${SRC})
 target_link_libraries( client  -Wall -lavutil -lavformat -lavcodec -lz -lavutil -lm -lswscale -lSDL2 -lSDL2_net -lopus )
 
 set(VA_ACCEL_FOUND FALSE)
-if (LIBVA_FOUND AND LIBVA_X11_FOUND)
+if (LINUX AND LIBVA_FOUND AND LIBVA_X11_FOUND)
 	set(VA_ACCEL_FOUND TRUE)
 endif()
 
