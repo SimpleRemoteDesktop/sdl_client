@@ -6,7 +6,6 @@
 #include<time.h>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_net.h>
 #include <SDL2/SDL_thread.h>
 
 #include <stdio.h>
@@ -15,6 +14,7 @@
 #include "Queue.h"
 #include "Frame.h"
 
+#include "tcpSocketWrapper.h"
 
 enum type {
     TYPE_KEY_DOWN = 1,
@@ -60,7 +60,6 @@ public:
 
     Queue<Frame> *videoQueue;
     Queue<Frame> *audioQueue;
-    TCPsocket control_socket;
     bool isRunning;
     uint8_t *inbuf;
     int inbuf_average;
