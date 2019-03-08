@@ -1,5 +1,7 @@
 #include <cstdio>
 # include "tcpSocketWrapper.h"
+#include <stdio.h>
+
 
 static SOCKET sock;
 
