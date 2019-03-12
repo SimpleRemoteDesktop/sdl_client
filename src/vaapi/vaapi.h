@@ -1,7 +1,7 @@
 //
 // Created by user on 12/26/18.
 //
-
+#ifdef __linux__
 #ifndef SIMPLEREMOTEDESKTOP_SDL_CLIENT_VAAPI_H
 #define SIMPLEREMOTEDESKTOP_SDL_CLIENT_VAAPI_H
 
@@ -22,3 +22,4 @@ void vaapi_queue(AVFrame *dec_frame, Window win, int width, int height);
 #endif
 
 #endif //SIMPLEREMOTEDESKTOP_SDL_CLIENT_VAAPI_H
+#endif
