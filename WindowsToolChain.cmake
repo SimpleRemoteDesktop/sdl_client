@@ -5,9 +5,14 @@
 #    *) cd build
 #    *) cmake -DCMAKE_TOOLCHAIN_FILE=~/Toolchain-Ubuntu-mingw32.cmake ..
 
+# ffmpeg build specific information
+set(FFMPEG_ARCH x86)
+set(FFMPEG_TARGET_OS mingw32)
+
 set(CMAKE_SYSTEM_NAME Windows)
 message("Using Windows mingw32 toolchain")
 set(TOOLCHAIN_PREFIX i686-w64-mingw32)
+
 
 # cross compilers to use for C and C++
 set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}-gcc)
