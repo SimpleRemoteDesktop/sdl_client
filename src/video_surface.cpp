@@ -1,4 +1,6 @@
+#ifdef HAVE_VAAPI
 #include <va/va_x11.h>
+#endif
 #include "video_surface.h"
 
 
@@ -57,7 +59,7 @@ SDL_Rect SdlVideoRenderer::getSize() {
     SDL_GetWindowSize(this->screen, &size.w, &size.h);
     return size;
 }
-
+#ifdef __linux__
 Window SdlVideoRenderer::getX11Window() {
     SDL_SysWMinfo info;
     SDL_VERSION(&info.version);
@@ -68,3 +70,4 @@ Window SdlVideoRenderer::getX11Window() {
     }
     return info.info.x11.window;
 }
+#endif

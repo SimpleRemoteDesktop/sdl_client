@@ -45,7 +45,7 @@ void SRD_Net_connect(const char *hostname, int port) {
 }
 
 int SRD_Net_send(void *data, int size) {
-	return send(sock, data, size, 0);
+	return send(sock, (const char*) data, size, 0);
 
 }
 

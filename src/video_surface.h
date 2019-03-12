@@ -2,9 +2,10 @@
 #define SDL_CLIENT_VIDEO_SURFACE_H
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_net.h>
 #include <SDL2/SDL_thread.h>
+#ifdef __linux__
 #include <X11/X.h>
+#endif
 #include "video_decoder.h"
 #include "network.h"
 #include <SDL2/SDL_syswm.h>
@@ -17,7 +18,9 @@ public:
     SdlVideoRenderer(int rendererWidth, int rendererHeight, SDL_Window *screen);
     void update_video_surface(AVFrame* image);
     void destroy_texture();
+#ifdef __linux__
     Window getX11Window();
+#endif
     SDL_Rect getSize();
 
 private:

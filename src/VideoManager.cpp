@@ -25,12 +25,16 @@ void VideoManager::run() {
         //int time = SDL_GetTicks();
         AVFrame *pFrame = av_frame_alloc();
         if (this->decoder->decode(&frame, pFrame)) {
-            if (this->decoder->isVaapi) {
+#ifdef __linux__
+    		if (this->decoder->isVaapi) {
                 SDL_Rect size = this->surface->getSize();
                 vaapi_queue(pFrame, this->surface->getX11Window(), size.w, size.h);
             } else {
+#endif
                 this->surface->update_video_surface(pFrame);
+#ifdef __linux__
             }
+#endif
         }
         //printf("Decode d²isplay time %d \n", SDL_GetTicks() - time);
         delete[] frame.data;

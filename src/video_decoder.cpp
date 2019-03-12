@@ -1,8 +1,6 @@
 #include "video_decoder.h"
 #include "video_surface.h"
 
-#define HAVE_VAAPI
-
 #ifdef HAVE_VAAPI
 
 #include "vaapi/vaapi.h"
