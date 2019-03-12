@@ -4,15 +4,24 @@ client application based on sdl2
 
 ## requirements
 
+init all submodule :
+```
+git submodule update --init --recursive
+```
+
 ubuntu package : 
+
 ```bash
-sudo apt-get install build-essential libavutil-dev libavcodec-dev libswscale-dev libopus-dev libsdl2-dev libsdl2-net-dev libavformat-dev build-essential libavutil-dev libavcodec-dev libswscale-dev libopus-dev libsdl2-dev libsdl2-net-dev libavformat-dev cmake libva-dev yasm
+sudo apt-get install build-essential libavutil-dev libavcodec-dev libswscale-dev libopus-dev libsdl2-dev libavformat-dev build-essential libavutil-dev libavcodec-dev libswscale-dev libopus-dev libsdl2-dev libsdl2-net-dev libavformat-dev cmake libva-dev yasm
 
 ```
-windows : 
+
+cross compile build ofr windows:
+ 
 ```bash
 sudo apt-get install mingw-w64
 cmake -DCMAKE_TOOLCHAIN_FILE=WindowsToolChain.cmake .
+make distZip // generate zip archive
 ```
 
 ## build for windows
