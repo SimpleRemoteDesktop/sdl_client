@@ -21,14 +21,14 @@ if(WIN32)
 	ExternalProject_Add(opus
 		URL https://archive.mozilla.org/pub/opus/opus-1.2.1.tar.gz
 		CONFIGURE_COMMAND ./configure --disable-asm --prefix=${EXTERNALS_DIR} ${OPUS_WINDOWS_EXTRA}
-		BUILD_COMMAND make
+		BUILD_COMMAND make -j4
 		BUILD_IN_SOURCE 1
 		)
 
 	ExternalProject_Add(ffmpeg
 		URL http://ffmpeg.org/releases/ffmpeg-3.4.tar.bz2
-		CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-prefix/src/ffmpeg/configure --prefix=${EXTERNALS_DIR} ${FFMPEG_WINDOWS_EXTRA}
-		BUILD_COMMAND make
+		CONFIGURE_COMMAND ./configure --prefix=${EXTERNALS_DIR} ${FFMPEG_WINDOWS_EXTRA}
+		BUILD_COMMAND make -j4
 		BUILD_IN_SOURCE 1
 		)
 
@@ -39,17 +39,17 @@ if(WIN32)
 		CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNALS_DIR} -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} 
 		)
 
-	include_directories(external/include)
-	link_directories(external/lib)
+	include_directories(${CMAKE_BINARY_DIR}/external/include)
+	link_directories(${CMAKE_BINARY_DIR}/external/lib)
 endif()
 
 if(WIN32)
 	add_custom_target(distZip 
-		COMMAND rm -Rf ${CMAKE_CURRENT_SOURCE_DIR}/out
-		COMMAND mkdir ${CMAKE_CURRENT_SOURCE_DIR}/out
-		COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/external/bin/*.dll ${CMAKE_CURRENT_SOURCE_DIR}/out/
-		COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/dll/* ${CMAKE_CURRENT_SOURCE_DIR}/out/
-		COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/src/client.exe ${CMAKE_CURRENT_SOURCE_DIR}/out/
+		COMMAND rm -Rf ${CMAKE_BINARY_DIR}/out
+		COMMAND mkdir ${CMAKE_BINARY_DIR}/out
+		COMMAND cp ${CMAKE_BINARY_DIR}/external/bin/*.dll ${CMAKE_BINARY_DIR}/out/
+		COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/dll/* ${CMAKE_BINARY_DIR}/out/
+		COMMAND cp ${CMAKE_BINARY_DIR}/src/client.exe ${CMAKE_BINARY_DIR}/out/
 		COMMAND zip -j windows.zip out/* 
 		)
 endif()
