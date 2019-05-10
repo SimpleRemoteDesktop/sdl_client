@@ -97,9 +97,7 @@ void PlayerManager::start() {
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Creating network thread");
     this->networkThread = SDL_CreateThread(network_thread_fn, "network_thread", this->network);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Creating input thread");
-    this->inputThread = SDL_CreateThread(input_thread_fn, "input_thread", this->input);
-    int threadReturnValue;
-    SDL_WaitThread(this->videoThread, &threadReturnValue);
+    this->input->run();
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "thread finish exiting application");
 
 

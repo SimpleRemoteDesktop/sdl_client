@@ -29,9 +29,9 @@ SoftwareVideoDecoder::SoftwareVideoDecoder(int codecWidth, int codecHeight) {
     pCodecCtx->width = codecWidth; //TODO set value
     pCodecCtx->height = codecHeight; // TODO set value
     pCodecCtx->pix_fmt = AV_PIX_FMT_YUV420P; // TODO must support multiple value
-    pCodecCtx->flags |= AV_CODEC_FLAG_LOW_DELAY;
-    pCodecCtx->flags |= AV_CODEC_FLAG_OUTPUT_CORRUPT;
-    pCodecCtx->flags |= AV_CODEC_FLAG2_SHOW_ALL;
+    //pCodecCtx->flags |= AV_CODEC_FLAG_LOW_DELAY;
+    //pCodecCtx->flags |= AV_CODEC_FLAG_OUTPUT_CORRUPT;
+    //pCodecCtx->flags |= AV_CODEC_FLAG2_SHOW_ALL;
     pCodecCtx->skip_loop_filter = AVDISCARD_ALL;
 
 #ifdef HAVE_VAAPI
