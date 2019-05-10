@@ -11,7 +11,7 @@ set(FFMPEG_TARGET_OS mingw32)
 
 set(CMAKE_SYSTEM_NAME Windows)
 message("Using Windows mingw32 toolchain")
-set(TOOLCHAIN_PREFIX i686-w64-mingw32)
+set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
 
 
 # cross compilers to use for C and C++
