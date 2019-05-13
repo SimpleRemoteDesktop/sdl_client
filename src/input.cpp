@@ -130,6 +130,14 @@ void InputHandler::run() {
                     network->send(&send);
                     break;
                 }
+
+                case SDL_MOUSEWHEEL: {
+                    send.type = TYPE_MOUSE_WHEEL;
+                    send.x = userEvent.wheel.x;
+                    send.y = userEvent.wheel.y;
+                    network->send(&send);
+                    break;
+                }
             }
         }
     }
