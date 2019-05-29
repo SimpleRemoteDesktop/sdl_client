@@ -36,7 +36,23 @@ SdlVideoRenderer::SdlVideoRenderer(int rendererWidth, int rendererHeight, SDL_Wi
     this->width = rendererWidth;
     this->height = rendererHeight;
     this->screen = screen;
-    this->renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED);
+    this->init();
+}
+
+SDL_Rect SdlVideoRenderer::getSize() {
+    SDL_Rect size;
+    size.x = size.y = 0;
+    SDL_GetWindowSize(this->screen, &size.w, &size.h);
+    return size;
+}
+
+void SdlVideoRenderer::restart() {
+    this->destroy_texture();
+    this->init();
+}
+
+void SdlVideoRenderer::init() {
+this->renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!renderer) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL: could not create renderer - exiting\n");
         //FIXME
@@ -53,12 +69,6 @@ SdlVideoRenderer::SdlVideoRenderer(int rendererWidth, int rendererHeight, SDL_Wi
     );
 }
 
-SDL_Rect SdlVideoRenderer::getSize() {
-    SDL_Rect size;
-    size.x = size.y = 0;
-    SDL_GetWindowSize(this->screen, &size.w, &size.h);
-    return size;
-}
 #ifdef __linux__
 Window SdlVideoRenderer::getX11Window() {
     SDL_SysWMinfo info;

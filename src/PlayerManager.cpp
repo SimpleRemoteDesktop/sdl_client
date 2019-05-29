@@ -45,7 +45,7 @@ PlayerManager::PlayerManager(std::string hostname, int port, int codecWidth, int
             this->codecWidth,
             this->codecHeight,
             0);
-
+    this->fullScreenHandler();
 
     this->network = new Network();
     this->network->init_network(this->videoQueue, this->audioQueue);
@@ -68,14 +68,17 @@ PlayerManager::~PlayerManager() {
 void PlayerManager::fullScreenHandler() {
 	switch(this->screenDimension) {
 		case SRD_WINDOW:
+		    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Switching to FullScreen Desktop");
 			SDL_SetWindowFullscreen(screen, SDL_WINDOW_FULLSCREEN_DESKTOP);
 			this->screenDimension = SRD_FULLSCREEN_WINDOW;
 			break;
 		case SRD_FULLSCREEN:
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Switching to FullScreen Desktop");
 			SDL_SetWindowFullscreen(screen, SDL_WINDOW_FULLSCREEN_DESKTOP);
 			this->screenDimension = SRD_FULLSCREEN_WINDOW;
 			break;
 		case SRD_FULLSCREEN_WINDOW:
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Switching to windowed");
 			SDL_SetWindowFullscreen(screen, 0);
 			this->screenDimension = SRD_WINDOW;
 			break;
