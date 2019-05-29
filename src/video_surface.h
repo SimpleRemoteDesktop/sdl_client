@@ -18,6 +18,8 @@ public:
     SdlVideoRenderer(int rendererWidth, int rendererHeight, SDL_Window *screen);
     void update_video_surface(AVFrame* image);
     void destroy_texture();
+    void restart();
+    void init();
 #ifdef __linux__
     Window getX11Window();
 #endif
