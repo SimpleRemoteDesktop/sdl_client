@@ -30,13 +30,13 @@ make distZip // generate zip archive
 ## run the client
 
 ```bash
-./client hostname port 720p 10000000 30
+./client hostname port WxH 10000000 30
 ```
 
 ### arguments list
 1. hostname : distant server hostname or ip.(required);
 2. port : distant server tcp port. (required);
-3. video resolution : 720p or 1080p ( 1080p is currently buggy ).( optional, default:800x600 )
+3. video resolution : Width and height separated by 'x' ex: 1920x1200)
 4. bandwidth : bandwidth of the video stream in bit( optional, default : 10Mbit )
 5. framerate : video refreash rate in frame by second( optional, default : 25 );
 

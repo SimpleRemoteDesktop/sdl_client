@@ -14,7 +14,27 @@
 
 
 //memset(inbuf+INBUF_SIZE, 0, FF_INPUT_BUFFER_PADDING_SIZE);
+int getScreenResolution(char* res, char screen[2][5])
+{
+    int n=0;
+    int i;
+    int j=0;
 
+    for(i=0; SDL_TRUE; i++) {
+        if((const char*) res[i] != "x") {
+            screen[n][j++] = res[i];
+        } else {
+            screen[n][j++] = '\0';
+            n++;
+            j=0;
+        }
+        if(res[i] == '\0') {
+            break;
+        }
+    }
+    return n;
+
+}
 
 int main(int argc, char **argv) {
 
@@ -60,19 +80,11 @@ int main(int argc, char **argv) {
     }
 
     if (video_definition != NULL) {
-        if (strcmp("720p", video_definition) == 0) {
-            width = 1280;
-            height = 720;
-        } else if (strcmp("800p", video_definition) == 0) {
-            width = 1280;
-            height = 800;
-        } else if (strcmp("1080p", video_definition) == 0) {
-            width = 1920;
-            height = 1080;
-        } else if (strcmp("960p", video_definition) == 0) {
-            width = 1280;
-            height = 960;
-        } 
+        char screen[2][5];
+        getScreenResolution(video_definition, screen);
+        width = atoi(screen[0]);
+        height = atoi(screen[1]);
+        printf(" width %d, height : %d \n", width, height);
     }
 
 	std::string hostname(strdup(argv[1]));
@@ -111,5 +123,6 @@ int main(int argc, char **argv) {
 
 	exit(1);
 }
+
 
 
