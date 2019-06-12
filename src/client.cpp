@@ -5,6 +5,7 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
 #include "network.h"
 #include "input.h"
 #include "video_decoder.h"
@@ -13,28 +14,7 @@
 #include "audio_player.h"
 
 
-//memset(inbuf+INBUF_SIZE, 0, FF_INPUT_BUFFER_PADDING_SIZE);
-int getScreenResolution(char* res, char screen[2][5])
-{
-    int n=0;
-    int i;
-    int j=0;
 
-    for(i=0; SDL_TRUE; i++) {
-        if((const char*) res[i] != "x") {
-            screen[n][j++] = res[i];
-        } else {
-            screen[n][j++] = '\0';
-            n++;
-            j=0;
-        }
-        if(res[i] == '\0') {
-            break;
-        }
-    }
-    return n;
-
-}
 
 int main(int argc, char **argv) {
 
@@ -80,10 +60,8 @@ int main(int argc, char **argv) {
     }
 
     if (video_definition != NULL) {
-        char screen[2][5];
-        getScreenResolution(video_definition, screen);
-        width = atoi(screen[0]);
-        height = atoi(screen[1]);
+        width = atoi(strtok(video_definition, "x"));
+        height = atoi(strtok(NULL, "x"));
         printf(" width %d, height : %d \n", width, height);
     }
 
